@@ -1,0 +1,40 @@
+{
+    "choices": [
+        {
+            "title": "option1",
+            "description": "option1...",
+            "image": "option1 img",
+            "people": 0,
+            "military": 0,
+            "economy": 0,
+            "agriculture": 0
+        },
+        {
+            "title": "option2",
+            "description": "option2...",
+            "image": "option2 img",
+            "people": 0,
+            "military": 0,
+            "economy": 0,
+            "agriculture": 0
+        },
+        {
+            "title": "option3",
+            "description": "option3...",
+            "image": "option3 img",
+            "people": 0,
+            "military": 0,
+            "economy": 0,
+            "agriculture": 0
+        },
+        {
+            "title": "option4",
+            "description": "option4...",
+            "image": "option3 img",
+            "people": 0,
+            "military": 0,
+            "economy": 0,
+            "agriculture": 0
+        }
+    ]
+}

@@ -1,6 +1,7 @@
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
+import json
 myInterface = Tk()
 screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
 screen.pack()
