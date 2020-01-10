@@ -7,4 +7,6 @@ It's 3030, and an experiment gone wrong has started an apocalypse. During this t
 
 ## Credits ##
 PythonPackageInstaller (folders lib, resources) from Misha Melnyk @[https://github.com/kertox662](https://github.com/kertox662)
+
+Link to repo:
 [https://github.com/kertox662/PythonPackageInstaller](https://github.com/kertox662/PythonPackageInstaller)
