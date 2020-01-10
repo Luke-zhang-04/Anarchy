@@ -54,7 +54,12 @@ class card:
         #self.card_text_area = self.round_rectangle(
         #    dimensions[0]+50, dimensions[1]+275, dimensions[2]-50, dimensions[3]-50, radius = 20, fill = "gray15"
         #)
-        self.card_image_file = resize_image(self.situation['image'], self.situation['resize']['x'], self.situation['resize']['y'])
+        self.card_image_file = choice(self.situation["image"]) if type(self.situation["image"][0]) == list else self.situation["image"]
+
+        print("***", self.card_image_file[0], self.card_image_file[1], self.card_image_file[2])
+        self.card_image_file = resize_image(
+            self.card_image_file[0], self.card_image_file[1], self.card_image_file[2]
+        )
         
         self.card_image = screen.create_image(
             (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.card_image_file
@@ -69,9 +74,12 @@ class card:
             text = self.situation['description']
         )
 
-card1 = card()
 
-card1.draw()
+while True:
+    card1 = card()
+    card1.draw()
 
-screen.update()
+    screen.update()
+    sleep(2)
+
 screen.mainloop()
