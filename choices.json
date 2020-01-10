@@ -1,13 +1,13 @@
 {
     "choices": [
         {
-            "title": "option1",
-            "description": "option1...",
-            "image": "option1 img",
-            "people": 0,
+            "title": "Health Care",
+            "description": "Our hospitals are underfunded. Invest $100 000 into better healthcare",
+            "image": "pictures/doctor.gif",
+            "people": 30,
             "military": 0,
-            "economy": 0,
-            "agriculture": 0
+            "economy": -20,
+            "nature": 0
         },
         {
             "title": "option2",
@@ -16,7 +16,7 @@
             "people": 0,
             "military": 0,
             "economy": 0,
-            "agriculture": 0
+            "nature": 0
         },
         {
             "title": "option3",
@@ -25,7 +25,7 @@
             "people": 0,
             "military": 0,
             "economy": 0,
-            "agriculture": 0
+            "nature": 0
         },
         {
             "title": "option4",
@@ -34,7 +34,7 @@
             "people": 0,
             "military": 0,
             "economy": 0,
-            "agriculture": 0
+            "nature": 0
         }
     ]
 }
