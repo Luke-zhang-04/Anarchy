@@ -11,9 +11,9 @@ screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
 screen.pack()
 screen.update()
 
-def resize_image(image, x, y):
+def resize_image(image, *args):
     image_file = Image.open(image)
-    image_file = image_file.resize((x, y), Image.ANTIALIAS)
+    image_file = image_file.resize((args[0], args[1]), Image.ANTIALIAS)
     image_file = ImageTk.PhotoImage(image_file)
     return image_file
 
@@ -22,7 +22,6 @@ class card:
         with open('choices.json') as fin:
             data = json.load(fin)
             self.situation = choice(data['choices'])
-        self.situation = choice([data['choices'][0]])
 
     @staticmethod
     def round_rectangle(x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
@@ -38,19 +37,37 @@ class card:
     def draw(self):
         width, height = screen.winfo_width(), screen.winfo_height()
 
-        self.card_body = self.round_rectangle(width//2-150, height//2-300, width//2+150, height//2+200, radius = 25, fill = "black")
+        self.card_body = self.round_rectangle(
+            width//2-150, height//2-300, width//2+150, height//2+200, radius = 25, fill = "gray50"
+        )
+
         dimensions = screen.bbox(self.card_body)
 
-        self.card_title_area = self.round_rectangle(dimensions[0]+50, dimensions[1]+25, dimensions[2]-50, dimensions[1]+75, radius = 20, fill = "gray26")
+        self.card_title_area = self.round_rectangle(
+            dimensions[0]+50, dimensions[1]+25, dimensions[2]-50, dimensions[1]+75, radius = 20, fill = "gray15"
+        )
 
-        self.card_image_area = self.round_rectangle(dimensions[0]+50, dimensions[1]+100, dimensions[2]-50, dimensions[3]-250, radius = 20, fill = "white")
+        self.card_image_area = self.round_rectangle(
+            dimensions[0]+50, dimensions[1]+100, dimensions[2]-50, dimensions[3]-250, radius = 20, fill = "gray75"
+        )
         
-        self.card_text_area = self.round_rectangle(dimensions[0]+50, dimensions[1]+275, dimensions[2]-50, dimensions[3]-50, radius = 20, fill = "gray15")
+        #self.card_text_area = self.round_rectangle(
+        #    dimensions[0]+50, dimensions[1]+275, dimensions[2]-50, dimensions[3]-50, radius = 20, fill = "gray15"
+        #)
+        self.card_image_file = resize_image(self.situation['image'], self.situation['resize']['x'], self.situation['resize']['y'])
+        
+        self.card_image = screen.create_image(
+            (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.card_image_file
+        )
 
-        print(self.situation)
+        self.person = screen.create_text(
+            dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.situation['title']
+        )
 
-        self.card_image_file = resize_image(self.situation['image'], 100, 125)
-        self.card_image = screen.create_image((dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.card_image_file)
+        self.text = screen.create_text(
+            dimensions[0]+50, dimensions[1]+300, width = (dimensions[2]-50)-(dimensions[0]+50), anchor = "nw",
+            text = self.situation['description']
+        )
 
 card1 = card()
 
