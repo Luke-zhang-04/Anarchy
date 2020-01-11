@@ -4,12 +4,26 @@ install()
 from tkinter import Tk, Canvas, PhotoImage
 from time import sleep
 from random import choice
+import os
+import shutil
 from PIL import Image, ImageTk #sudo pip install pillow into terminal
 import json
 myInterface = Tk()
 screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
 screen.pack()
 screen.update()
+
+def write(source, out):
+    sourceDoc = open(source, 'r')
+    read = sourceDoc.readlines()
+    sourceDoc.close()
+
+    outDoc = open(out, 'w')
+
+    for i in read:
+        outDoc.write(i)
+    
+    outDoc.close()
 
 def resize_image(image, *args):
     image_file = Image.open(image)
@@ -18,13 +32,16 @@ def resize_image(image, *args):
     return image_file
 
 class card:
-    def __init__(self):
+    def __init__(self, screen):
+        self.screen = screen
         with open('choices.json') as fin:
             data = json.load(fin)
             self.situation = choice(data['choices'])
+            self.situation = choice(self.situation)
+            #self.situation = data['choices'][-1]
 
     @staticmethod
-    def round_rectangle(x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
+    def round_rectangle(screen, x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
 
         points = [x1+radius, y1, x1+radius, y1, x2-radius, y1, x2-radius,
         y1, x2, y1, x2, y1+radius, x2, y1+radius, x2, y2-radius, x2,
@@ -37,46 +54,52 @@ class card:
     def draw(self):
         width, height = screen.winfo_width(), screen.winfo_height()
 
+        #create card body
         self.card_body = self.round_rectangle(
-            width//2-150, height//2-300, width//2+150, height//2+200, radius = 25, fill = "gray50"
+            self.screen, width//2-150, height//2-300, width//2+150, height//2+200, radius = 25, fill = "gray50"
         )
 
+        #dimensions of the card
         dimensions = screen.bbox(self.card_body)
 
-        self.card_title_area = self.round_rectangle(
-            dimensions[0]+50, dimensions[1]+25, dimensions[2]-50, dimensions[1]+75, radius = 20, fill = "gray15"
+        #top area of card
+        self.card_top_area = self.round_rectangle(
+            self.screen, dimensions[0]+50, dimensions[1]+25, dimensions[2]-50, dimensions[1]+75, radius = 20, fill = "gray15"
         )
 
+        #image area of card
         self.card_image_area = self.round_rectangle(
-            dimensions[0]+50, dimensions[1]+100, dimensions[2]-50, dimensions[3]-250, radius = 20, fill = "gray75"
+            self.screen, dimensions[0]+50, dimensions[1]+100, dimensions[2]-50, dimensions[3]-250, radius = 20, fill = "gray75"
         )
         
-        #self.card_text_area = self.round_rectangle(
-        #    dimensions[0]+50, dimensions[1]+275, dimensions[2]-50, dimensions[3]-50, radius = 20, fill = "gray15"
-        #)
+        #open card image
         self.card_image_file = choice(self.situation["image"]) if type(self.situation["image"][0]) == list else self.situation["image"]
 
-        print("***", self.card_image_file[0], self.card_image_file[1], self.card_image_file[2])
+        #resize the image
         self.card_image_file = resize_image(
             self.card_image_file[0], self.card_image_file[1], self.card_image_file[2]
         )
         
+        #create the image
         self.card_image = screen.create_image(
             (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.card_image_file
         )
 
+        #create text of person speaking
         self.person = screen.create_text(
             dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.situation['title']
         )
 
+        #create text of persons name and title
         self.text = screen.create_text(
             dimensions[0]+50, dimensions[1]+300, width = (dimensions[2]-50)-(dimensions[0]+50), anchor = "nw",
             text = self.situation['description']
         )
 
+write('choices.json', 'choices-user.json')
 
 while True:
-    card1 = card()
+    card1 = card(screen)
     card1.draw()
 
     screen.update()
