@@ -13,17 +13,17 @@ screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
 screen.pack()
 screen.update()
 
-def write(source, out):
-    sourceDoc = open(source, 'r')
-    read = sourceDoc.readlines()
-    sourceDoc.close()
+def copyFile(copyFrom, copyTo):
+    source = open(copyFrom, 'r')
+    read = source.readlines()
+    source.close()
 
-    outDoc = open(out, 'w')
+    out = open(copyTo, 'w')
 
     for i in read:
-        outDoc.write(i)
+        out.write(i)
     
-    outDoc.close()
+    out.close()
 
 def resize_image(image, *args):
     image_file = Image.open(image)
@@ -36,7 +36,9 @@ class card:
         self.screen = screen
         with open('choices.json') as fin:
             data = json.load(fin)
-            self.situation = choice(data['choices'])
+            print(list(data['choices']), "\n\n", data['choices'])
+            self.situation = choice(list(data['choices']))
+            self.situation = data['choices'][self.situation]
             self.situation = choice(self.situation)
             #self.situation = data['choices'][-1]
 
@@ -73,6 +75,7 @@ class card:
         )
         
         #open card image
+        print(self.situation)
         self.card_image_file = choice(self.situation["image"]) if type(self.situation["image"][0]) == list else self.situation["image"]
 
         #resize the image
@@ -96,7 +99,7 @@ class card:
             text = self.situation['description']
         )
 
-write('choices.json', 'choices-user.json')
+copyFile('choices.json', 'choices-user.json')
 
 while True:
     card1 = card(screen)
