@@ -1,10 +1,35 @@
 {
     "choices": {
+        "vp": [
+            {
+                "title": "Vice President Russel",
+                "image": ["pictures/vp.png", 200, 150]
+            },
+            {
+                "description": "Pharmaceutical want to use animal testing for their new drugs, and want government approval.",
+                "true": {
+                    "message": "They can",
+                    "people": 0,
+                    "military": 0,
+                    "economy": 10,
+                    "nature": -10
+                },
+                "false": {
+                    "message": "Under no circumstances can they do so",
+                    "people": 0,
+                    "military": 0,
+                    "economy": -10,
+                    "nature": 10
+                }
+            }
+        ],
         "doctor": [
             {
                 "title": "Hospital Administrator Jones",
+                "image": ["pictures/doctor.png", 100, 125]
+            },
+            {
                 "description": "Our hospitals are underfunded. Our equipment is outdated and we are constantly short on staff. We want the government to invest $100 000 into better healthcare.",
-                "image": ["pictures/doctor.gif", 100, 125],
                 "true": {
                     "message": "Consider it done",
                     "people": 30,
@@ -24,8 +49,11 @@
         "scientist": [
             {
                 "title": "Research Officer Rodriguez",
-                "description": "We want permission to use nuclear power for our projects, but the head scientist won't let us. Using nuclear power may be risky, but our research speed will increase darastically",
-                "image": ["pictures/scientist.gif", 175, 150],
+                "image": ["pictures/scientist.png", 175, 150]
+            },
+            {
+                "description": "We want permission to use nuclear power for our projects, but the head scientist won't let us.",
+                
                 "people": 0,
                 "military": 10,
                 "economy": 10,
@@ -35,8 +63,10 @@
         "citizen": [
             {
                 "title": "Concerned Citizen",
+                "image": [["pictures/person1.png", 125, 175], ["pictures/person2.png", 150, 150]]
+            },
+            {
                 "description": "Homeless people bad!",
-                "image": [["pictures/person1.gif", 125, 175], ["pictures/person2.gif", 150, 150]],
                 "people": 0,
                 "military": 10,
                 "economy": 10,
@@ -46,8 +76,10 @@
         "CIA": [
             {
                 "title": "Director of National Intellegence\nSmith",
+                "image": ["pictures/spy.png", 125, 125]
+            },
+            {
                 "description": "\nWe need more security measures. We are concerned about threats appearning from within the countries. Let us imlpement these measures.",
-                "image": ["pictures/spy.gif", 125, 125],
                 "people": -15,
                 "military": 10,
                 "economy": -15,
@@ -57,8 +89,10 @@
         "foreign": [
             {
                 "title": "Secretary of State Moore",
+                "image": ["pictures/secOfState.png", 150, 125]
+            },
+            {
                 "description": "Foreign Affairs",
-                "image": ["pictures/secOfState.png", 150, 125],
                 "people": 0,
                 "military": 25,
                 "economy": -25,
@@ -68,8 +102,10 @@
         "military": [
             {
                 "title": "General Torres",
+                "image": ["pictures/general.png", 225, 190]
+            },
+            {
                 "description": "We need to increase our defense budget and spend more on the military. Foreign powers are becoming stronger and will soon be a real threat towards us. We need to be able to defend outselves.",
-                "image": ["pictures/general.gif", 150, 125],
                 "people": 0,
                 "military": 25,
                 "economy": -25,

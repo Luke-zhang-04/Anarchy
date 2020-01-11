@@ -39,7 +39,8 @@ class card:
             print(list(data['choices']), "\n\n", data['choices'])
             self.situation = choice(list(data['choices']))
             self.situation = data['choices'][self.situation]
-            self.situation = choice(self.situation)
+            self.person = self.situation[0]
+            self.situation = choice(self.situation[1:])
             #self.situation = data['choices'][-1]
 
     @staticmethod
@@ -76,7 +77,7 @@ class card:
         
         #open card image
         print(self.situation)
-        self.card_image_file = choice(self.situation["image"]) if type(self.situation["image"][0]) == list else self.situation["image"]
+        self.card_image_file = choice(self.person["image"]) if type(self.person["image"][0]) == list else self.person["image"]
 
         #resize the image
         self.card_image_file = resize_image(
@@ -90,7 +91,7 @@ class card:
 
         #create text of person speaking
         self.person = screen.create_text(
-            dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.situation['title']
+            dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.person['title']
         )
 
         #create text of persons name and title
