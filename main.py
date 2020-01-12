@@ -6,7 +6,7 @@ from time import sleep
 from random import choice
 import os
 import shutil
-from PIL import Image, ImageTk #sudo pip install pillow into terminal
+from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 import json
 myInterface = Tk()
 screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
@@ -34,6 +34,8 @@ def resize_image(image, *args):
 class military:
     def __init__(self, screen):
         self.screen = screen
+        self.image_file = resize_image("pictures/icons/gun-trans.png", 100, 300)
+        self.image = screen.create_image(200, 200, anchor = 'nw', image = self.image_file)
 
     def __add__(self, other):
         print(other)
@@ -77,35 +79,35 @@ class card:
         width, height = screen.winfo_width(), screen.winfo_height()
 
         #create card body
-        self.card_body = self.round_rectangle(
+        self.body = self.round_rectangle(
             self.screen, width//2-150, height//2-300, width//2+150, height//2+200, radius = 25, fill = "gray50"
         )
 
         #dimensions of the card
-        dimensions = screen.bbox(self.card_body)
+        dimensions = screen.bbox(self.body)
 
         #top area of card
-        self.card_top_area = self.round_rectangle(
+        self.top_area = self.round_rectangle(
             self.screen, dimensions[0]+50, dimensions[1]+25, dimensions[2]-50, dimensions[1]+75, radius = 20, fill = "gray15"
         )
 
         #image area of card
-        self.card_image_area = self.round_rectangle(
+        self.image_area = self.round_rectangle(
             self.screen, dimensions[0]+50, dimensions[1]+100, dimensions[2]-50, dimensions[3]-250, radius = 20, fill = "gray75"
         )
         
         #open card image
         print(self.situation)
-        self.card_image_file = choice(self.person["image"]) if type(self.person["image"][0]) == list else self.person["image"]
+        self.image_file = choice(self.person["image"]) if type(self.person["image"][0]) == list else self.person["image"]
 
         #resize the image
-        self.card_image_file = resize_image(
-            self.card_image_file[0], self.card_image_file[1], self.card_image_file[2]
+        self.image_file = resize_image(
+            self.image_file[0], self.image_file[1], self.image_file[2]
         )
         
         #create the image
-        self.card_image = screen.create_image(
-            (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.card_image_file
+        self.image = screen.create_image(
+            (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.image_file
         )
 
         #create text of person speaking
