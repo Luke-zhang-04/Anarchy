@@ -125,8 +125,6 @@ test = military(screen)
 test = test+100
 print(test)
 
-create_gun(screen, 100, 200, 100)
-
 '''
 while True:
     card1 = card(screen)
