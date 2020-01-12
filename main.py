@@ -31,6 +31,25 @@ def resize_image(image, *args):
     image_file = ImageTk.PhotoImage(image_file)
     return image_file
 
+class military:
+    def __init__(self, screen):
+        self.screen = screen
+
+    def __add__(self, other):
+        print(other)
+
+class money:
+    def __init__(self, screen):
+        self.screen = screen
+
+class nature:
+    def __init__(self, screen):
+        self.screen = screen
+
+class people:
+    def __init__(self, screen):
+        self.screen = screen
+
 class card:
     def __init__(self, screen):
         self.screen = screen
@@ -102,11 +121,19 @@ class card:
 
 copyFile('choices.json', 'choices-user.json')
 
+test = military(screen)
+test = test+100
+print(test)
+
+create_gun(screen, 100, 200, 100)
+
+'''
 while True:
     card1 = card(screen)
     card1.draw()
 
     screen.update()
     sleep(2)
+'''
 
 screen.mainloop()
