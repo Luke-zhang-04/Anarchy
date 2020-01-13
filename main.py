@@ -4,8 +4,6 @@ install()
 from tkinter import Tk, Canvas, PhotoImage
 from time import sleep
 from random import choice
-import os
-import shutil
 from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 import json
 myInterface = Tk()
@@ -25,38 +23,51 @@ def copyFile(copyFrom, copyTo):
     
     out.close()
 
-def resize_image(image, *args):
+def resize_image(image, x, y):
     image_file = Image.open(image)
-    image_file = image_file.resize((args[0], args[1]), Image.ANTIALIAS)
+    image_file = image_file.resize((x, y), Image.ANTIALIAS)
     image_file = ImageTk.PhotoImage(image_file)
     return image_file
+
+def resize_image2(image, x, y):
+    image_file = Image.open(image)
+    image_file = image_file.resize((x, y), Image.ANTIALIAS)
+    return image_file
+
+def crop_image(image, left, right, top, bottom):
+    croppedImage = image.crop([ left, top, right, bottom])
+    croppedImage = ImageTk.PhotoImage(croppedImage)
+    return croppedImage
 
 class military:
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image("pictures/icons/gun-trans.png", 40, 50)
-        self.image = screen.create_image(10, 10, anchor = 'nw', image = self.image_file)
+        self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
 
     def __add__(self, other):
         print(other)
+        self.cropped_image_file = resize_image2("pictures/icons/gun-white.png", 40, 60)
+        self.cropped_image = crop_image(self.cropped_image_file, 0, 100-other, 0, 0)
+        self.cropped_image = self.screen.create_image(10, 60, anchor = 'sw', image = self.cropped_image)
 
 class money:
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image("pictures/icons/money-trans.png", 40, 50)
-        self.image = screen.create_image(50, 10, anchor = 'nw', image = self.image_file)
+        self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
 
 class nature:
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image("pictures/icons/plant-trans.png", 40, 50)
-        self.image = screen.create_image(90, 10, anchor = 'nw', image = self.image_file)
+        self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
 
 class people:
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image("pictures/icons/people-trans.png", 70, 50)
-        self.image = screen.create_image(120, 10, anchor = 'nw', image = self.image_file)
+        self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
 
 class card:
     def __init__(self, screen):
@@ -130,6 +141,7 @@ class card:
 copyFile('choices.json', 'choices-user.json')
 
 test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
+test + 50
 #test = test+100
 #print(test)
 
