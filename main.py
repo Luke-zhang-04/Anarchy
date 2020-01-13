@@ -34,8 +34,8 @@ def resize_image(image, *args):
 class military:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image("pictures/icons/gun-trans.png", 100, 300)
-        self.image = screen.create_image(200, 200, anchor = 'nw', image = self.image_file)
+        self.image_file = resize_image("pictures/icons/gun-trans.png", 40, 50)
+        self.image = screen.create_image(10, 10, anchor = 'nw', image = self.image_file)
 
     def __add__(self, other):
         print(other)
@@ -43,14 +43,20 @@ class military:
 class money:
     def __init__(self, screen):
         self.screen = screen
+        self.image_file = resize_image("pictures/icons/money-trans.png", 40, 50)
+        self.image = screen.create_image(50, 10, anchor = 'nw', image = self.image_file)
 
 class nature:
     def __init__(self, screen):
         self.screen = screen
+        self.image_file = resize_image("pictures/icons/plant-trans.png", 40, 50)
+        self.image = screen.create_image(90, 10, anchor = 'nw', image = self.image_file)
 
 class people:
     def __init__(self, screen):
         self.screen = screen
+        self.image_file = resize_image("pictures/icons/people-trans.png", 70, 50)
+        self.image = screen.create_image(120, 10, anchor = 'nw', image = self.image_file)
 
 class card:
     def __init__(self, screen):
@@ -123,9 +129,9 @@ class card:
 
 copyFile('choices.json', 'choices-user.json')
 
-test = military(screen)
-test = test+100
-print(test)
+test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
+#test = test+100
+#print(test)
 
 '''
 while True:
@@ -135,5 +141,5 @@ while True:
     screen.update()
     sleep(2)
 '''
-
+screen.update()
 screen.mainloop()
