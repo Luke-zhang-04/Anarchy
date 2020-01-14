@@ -32,31 +32,60 @@ def resize_image(image, x, y):
 def crop_image(image, left, right, top, bottom):
     return image.crop((left, top, right, bottom))
 
+#no point in trying inheritance; may do more harm than good
 class military:
     def __init__(self, screen):
         self.screen = screen
         image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50)
         self.image_file = pack(image_file)
         self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
+        self.current = 0
+        self.cropped_image = None
 
     def __add__(self, other):
         cropped_image_file = resize_image(Image.open("pictures/icons/gun-white.png"), 40, 50)
         width, height = cropped_image_file.size
 
         increment = height/100
-        percentage = height-other*increment
+        self.current = self.current + other if self.current + other < 100 else 100
+        self.amt = height-self.current*increment
 
-        cropped_image_file = crop_image(cropped_image_file, 0, 40, percentage, 50)
+        if self.amt > height: self.amt = amt
+
+        print(self.amt, other, self.amt+other)
+
+        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
         self.cropped_image_file = pack(cropped_image_file)
+        self.screen.delete(self.cropped_image)
         self.cropped_image = self.screen.create_image(10, 60, anchor = 'sw', image = self.cropped_image_file)
         return self
 
 class money:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
-        self.image_file = pack(self.image_file)
+        image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
+        self.image_file = pack(image_file)
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
+        self.current = 0
+        self.cropped_image = None
+    
+    def __add__(self, other):
+        cropped_image_file = resize_image(Image.open("pictures/icons/money-white.png"), 40, 50)
+        width, height = cropped_image_file.size
+
+        increment = height/100
+        self.current = self.current + other if self.current + other < 100 else 100
+        self.amt = height-self.current*increment
+
+        if self.amt > height: self.amt = amt
+
+        print(self.amt, other, self.amt+other)
+
+        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
+        self.cropped_image_file = pack(cropped_image_file)
+        self.screen.delete(self.cropped_image)
+        self.cropped_image = self.screen.create_image(50, 60, anchor = 'sw', image = self.cropped_image_file)
+        return self
 
 class nature:
     def __init__(self, screen):
@@ -64,6 +93,26 @@ class nature:
         self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
+        self.current = 0
+        self.cropped_image = None
+    
+    def __add__(self, other):
+        cropped_image_file = resize_image(Image.open("pictures/icons/plant-white.png"), 40, 50)
+        width, height = cropped_image_file.size
+
+        increment = height/100
+        self.current = self.current + other if self.current + other < 100 else 100
+        self.amt = height-self.current*increment
+
+        if self.amt > height: self.amt = amt
+
+        print(self.amt, other, self.amt+other)
+
+        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
+        self.cropped_image_file = pack(cropped_image_file)
+        self.screen.delete(self.cropped_image)
+        self.cropped_image = self.screen.create_image(90, 60, anchor = 'sw', image = self.cropped_image_file)
+        return self
 
 class people:
     def __init__(self, screen):
@@ -71,6 +120,26 @@ class people:
         self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
+        self.current = 0
+        self.cropped_image = None
+    
+    def __add__(self, other):
+        cropped_image_file = resize_image(Image.open("pictures/icons/people-white.png"), 70, 50)
+        width, height = cropped_image_file.size
+
+        increment = height/100
+        self.current = self.current + other if self.current + other < 100 else 100
+        self.amt = height-self.current*increment
+
+        if self.amt > height: self.amt = amt
+
+        print(self.amt, other, self.amt+other)
+
+        cropped_image_file = crop_image(cropped_image_file, 0, 70, self.amt, 50)
+        self.cropped_image_file = pack(cropped_image_file)
+        self.screen.delete(self.cropped_image)
+        self.cropped_image = self.screen.create_image(120, 60, anchor = 'sw', image = self.cropped_image_file)
+        return self
 
 class card:
     def __init__(self, screen):
@@ -78,11 +147,10 @@ class card:
         with open('choices.json') as fin:
             data = json.load(fin)
             print(list(data['choices']), "\n\n", data['choices'])
-            self.situation = choice(list(data['choices']))
-            self.situation = data['choices'][self.situation]
-            self.person = self.situation[0]
-            self.situation = choice(self.situation[1:])
-            #self.situation = data['choices'][-1]
+            situation = choice(list(data['choices']))
+            situation = data['choices'][situation]
+            self.person = situation[0]
+            self.situation = choice(situation[1:])
 
     @staticmethod
     def round_rectangle(screen, x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
@@ -144,9 +212,14 @@ class card:
 copyFile('choices.json', 'choices-user.json')
 
 test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
-test += 50
-#test = test+100
-#print(test)
+
+for i in range(25):
+    test += 2
+    test2 += 2
+    test3 += 2
+    test4 += 2
+    screen.update()
+    sleep(0.03)
 
 '''
 while True:
@@ -156,5 +229,6 @@ while True:
     screen.update()
     sleep(2)
 '''
+
 screen.update()
 screen.mainloop()
