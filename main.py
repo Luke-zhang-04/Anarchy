@@ -23,56 +23,53 @@ def copyFile(copyFrom, copyTo):
     
     out.close()
 
-def resize_image(image, x, y):
-    image_file = Image.open(image)
-    image_file = image_file.resize((x, y), Image.ANTIALIAS)
-    print(image_file, "RESIZE")
-    image_file = ImageTk.PhotoImage(image_file)
-    return image_file
+def pack(image):
+    return ImageTk.PhotoImage(image)
 
-def resize_image2(image, x, y):
-    image_file = Image.open(image)
-    image_file = image_file.resize((x, y), Image.ANTIALIAS)
-    return image_file
+def resize_image(image, x, y):
+    return image.resize((x, y), Image.ANTIALIAS)
 
 def crop_image(image, left, right, top, bottom):
-    print(image, "IMG")
-    croppedImage = image.crop((left, top, right, bottom))
-    print(croppedImage, "AAA")
-    croppedImage = ImageTk.PhotoImage(croppedImage)
-    return croppedImage
+    return image.crop((left, top, right, bottom))
 
 class military:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image("pictures/icons/gun-trans.png", 40, 50)
+        image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50)
+        self.image_file = pack(image_file)
         self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
 
     def __add__(self, other):
-        print(other)
-        self.cropped_image_file = resize_image2("pictures/icons/gun-trans.png", 40, 50)
-        self.screen.create_image(100, 60, anchor = "n", image = ImageTk.PhotoImage(self.cropped_image_file))
-        print(self.cropped_image_file, "***")
-        self.cropped_image = crop_image(self.cropped_image_file, 0, 40, 0, 60)
-        print(self.cropped_image, "***")
-        self.cropped_image = self.screen.create_image(100, 60, anchor = 'sw', image = self.cropped_image)
+        cropped_image_file = resize_image(Image.open("pictures/icons/gun-white.png"), 40, 50)
+        width, height = cropped_image_file.size
+
+        increment = height/100
+        percentage = height-other*increment
+
+        cropped_image_file = crop_image(cropped_image_file, 0, 40, percentage, 50)
+        self.cropped_image_file = pack(cropped_image_file)
+        self.cropped_image = self.screen.create_image(10, 60, anchor = 'sw', image = self.cropped_image_file)
+        return self
 
 class money:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image("pictures/icons/money-trans.png", 40, 50)
+        self.image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
+        self.image_file = pack(self.image_file)
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
 
 class nature:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image("pictures/icons/plant-trans.png", 40, 50)
+        self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40, 50)
+        self.image_file = pack(self.image_file)
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
 
 class people:
     def __init__(self, screen):
         self.screen = screen
-        self.image_file = resize_image("pictures/icons/people-trans.png", 70, 50)
+        self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70, 50)
+        self.image_file = pack(self.image_file)
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
 
 class card:
@@ -125,7 +122,7 @@ class card:
 
         #resize the image
         self.image_file = resize_image(
-            self.image_file[0], self.image_file[1], self.image_file[2]
+            Image.open(self.image_file[0]), self.image_file[1], self.image_file[2]
         )
         
         #create the image
@@ -147,7 +144,7 @@ class card:
 copyFile('choices.json', 'choices-user.json')
 
 test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
-test + 50
+test += 50
 #test = test+100
 #print(test)
 
