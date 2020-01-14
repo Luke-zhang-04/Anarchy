@@ -1,10 +1,10 @@
 from lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
 install()
+from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 
 from tkinter import Tk, Canvas, PhotoImage
 from time import sleep
 from random import choice
-from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 import json
 
 def copyFile(copyFrom, copyTo):
@@ -53,7 +53,11 @@ class military:
         cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
         self.cropped_image_file = pack(cropped_image_file)
         self.screen.delete(self.cropped_image)
-        self.cropped_image = self.screen.create_image(10, 60, anchor = 'sw', image = self.cropped_image_file)
+
+        self.cropped_image = self.screen.create_image(
+            10, 60, anchor = 'sw', image = self.cropped_image_file
+        )
+
         return self
 
 class money:
@@ -220,14 +224,15 @@ def runGame():
 
     copyFile('choices.json', 'choices-user.json')
 
-    test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
+    mil, mon, nat, peo = military(screen), money(screen), nature(screen), people(screen)
+    #military, money, nature, people
+
 
     for i in range(25):
-        
-        test += 2
-        test2 += 2
-        test3 += 2
-        test4 += 2
+        mil += 2
+        mon += 2
+        nat += 2
+        peo += 2
 
         screen.update()
         sleep(0.03)
@@ -239,8 +244,6 @@ def runGame():
         screen.update()
         sleep(2)
         del card1
-        screen.update()
-        sleep(2)
 
     screen.update()
     screen.mainloop()

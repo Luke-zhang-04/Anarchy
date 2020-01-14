@@ -13,8 +13,7 @@
                     "military": 0,
                     "economy": 10,
                     "nature": -10
-                },
-                "false": {
+                }, "false": {
                     "message": "Under no circumstances can they do so",
                     "people": 0,
                     "military": 0,
@@ -36,8 +35,7 @@
                     "military": 0,
                     "economy": -20,
                     "nature": 0
-                },
-                "false": {
+                }, "false": {
                     "message": "No",
                     "people": -15,
                     "military": 0,
@@ -53,11 +51,17 @@
             },
             {
                 "description": "We want permission to use nuclear power for our projects, but the head scientist won't let us.",
-                
-                "people": 0,
-                "military": 10,
-                "economy": 10,
-                "nature": -10
+                "true": {
+                    "people": 0,
+                    "military": 10,
+                    "economy": 10,
+                    "nature": -10
+                }, "false": {
+                    "people": 0,
+                    "military": 0,
+                    "economy": -20,
+                    "nature": 10
+                }
             }
         ],
         "citizen": [
@@ -66,11 +70,18 @@
                 "image": [["pictures/person1.png", 125, 175], ["pictures/person2.png", 150, 150]]
             },
             {
-                "description": "Homeless people bad!",
-                "people": 0,
-                "military": 10,
-                "economy": 10,
-                "nature": -10
+                "description": "Can we get rid of the homeless people? All they do is take up space, litter, and defacate on the streets!",
+                "true": {
+                    "people": 20,
+                    "military": 0,
+                    "economy": 0,
+                    "nature": 0
+                }, "false": {
+                    "people": 0,
+                    "military": 0,
+                    "economy": 0,
+                    "nature": 0
+                }
             }
         ],
         "CIA": [
@@ -80,10 +91,17 @@
             },
             {
                 "description": "\nWe need more security measures. We are concerned about threats appearning from within the countries. Let us imlpement these measures.",
-                "people": -15,
-                "military": 10,
-                "economy": -15,
-                "nature": 0
+                "true": {
+                    "people": -10,
+                    "military": 20,
+                    "economy": -15,
+                    "nature": 0
+                }, "false": {
+                    "people": 20,
+                    "military": -10,
+                    "economy": 10,
+                    "nature": 0
+                }
             }
         ],
         "foreign": [
@@ -93,10 +111,17 @@
             },
             {
                 "description": "Foreign Affairs",
-                "people": 0,
-                "military": 25,
-                "economy": -25,
-                "nature": 0
+                "true": {
+                    "people": 0,
+                    "military": 15,
+                    "economy": -15,
+                    "nature": 0
+                }, "false": {
+                    "people": 0,
+                    "military": -15,
+                    "economy": 15,
+                    "nature": 0
+                }
             }
         ],
         "military": [
@@ -106,10 +131,37 @@
             },
             {
                 "description": "We need to increase our defense budget and spend more on the military. Foreign powers are becoming stronger and will soon be a real threat towards us. We need to be able to defend outselves.",
-                "people": 0,
-                "military": 25,
-                "economy": -25,
-                "nature": 0
+                "true": {
+                    "people": 0,
+                    "military": 20,
+                    "economy": -15,
+                    "nature": -5
+                }, "false": {
+                    "people": 0,
+                    "military": -10,
+                    "economy": 10,
+                    "nature": 0
+                }
+            }
+        ],
+        "economy": [
+            {
+                "title": "Secretary of the Treasury Owens",
+                "image": ["economic.png", 225, 190]
+            },
+            {
+                "description": "We need to raise taxes to fund the government or we're going to run into a lot of debt",
+                "true": {
+                    "people": -10,
+                    "military": 0,
+                    "economy": 15,
+                    "nature": 0
+                }, "false": {
+                    "people": 10,
+                    "military": 0,
+                    "economy": -10,
+                    "nature": 0
+                }
             }
         ]
     }
