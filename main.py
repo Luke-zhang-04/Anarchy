@@ -6,10 +6,6 @@ from time import sleep
 from random import choice
 from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 import json
-myInterface = Tk()
-screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
-screen.pack()
-screen.update()
 
 def copyFile(copyFrom, copyTo):
     source = open(copyFrom, 'r')
@@ -143,6 +139,7 @@ class people:
 
 class card:
     def __init__(self, screen):
+        self.body = self.top_area = self.image_file = self.image_file = self.image = self.person = self.text = None
         self.screen = screen
         with open('choices.json') as fin:
             data = json.load(fin)
@@ -164,6 +161,7 @@ class card:
         return screen.create_polygon(points, **kwargs, smooth=True)
 
     def draw(self):
+        screen = self.screen
         width, height = screen.winfo_width(), screen.winfo_height()
 
         #create card body
@@ -185,7 +183,6 @@ class card:
         )
         
         #open card image
-        print(self.situation)
         self.image_file = choice(self.person["image"]) if type(self.person["image"][0]) == list else self.person["image"]
 
         #resize the image
@@ -193,6 +190,8 @@ class card:
             Image.open(self.image_file[0]), self.image_file[1], self.image_file[2]
         )
         
+        self.image_file = pack(self.image_file)
+
         #create the image
         self.image = screen.create_image(
             (dimensions[0]+dimensions[2])//2, dimensions[3]-250, anchor = "s", image = self.image_file
@@ -209,26 +208,42 @@ class card:
             text = self.situation['description']
         )
 
-copyFile('choices.json', 'choices-user.json')
+    def __del__(self):
+        self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
+        del self
 
-test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
-
-for i in range(25):
-    test += 2
-    test2 += 2
-    test3 += 2
-    test4 += 2
+def runGame():
+    myInterface = Tk()
+    screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
+    screen.pack()
     screen.update()
-    sleep(0.03)
 
-'''
-while True:
-    card1 = card(screen)
-    card1.draw()
+    copyFile('choices.json', 'choices-user.json')
+
+    test, test2, test3, test4 = military(screen), money(screen), nature(screen), people(screen)
+
+    for i in range(25):
+        
+        test += 2
+        test2 += 2
+        test3 += 2
+        test4 += 2
+
+        screen.update()
+        sleep(0.03)
+
+    while True:
+        card1 = card(screen)
+        card1.draw()
+
+        screen.update()
+        sleep(2)
+        del card1
+        screen.update()
+        sleep(2)
 
     screen.update()
-    sleep(2)
-'''
+    screen.mainloop()
 
-screen.update()
-screen.mainloop()
+if __name__ == "__main__":
+    runGame()
