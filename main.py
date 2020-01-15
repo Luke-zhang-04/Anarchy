@@ -2,10 +2,11 @@ from lib.install_packages import install #from https://github.com/kertox662/Pyth
 install()
 from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 
-from tkinter import Tk, Canvas, PhotoImage
+from tkinter import Tk, Canvas, PhotoImage, Button
 from time import sleep
 from random import choice
 import json
+
 
 def copyFile(copyFrom, copyTo):
     source = open(copyFrom, 'r')
@@ -19,14 +20,18 @@ def copyFile(copyFrom, copyTo):
     
     out.close()
 
-def pack(image):
+
+def pack(image): #returns a photoimage
     return ImageTk.PhotoImage(image)
 
-def resize_image(image, x, y):
+
+def resize_image(image, x, y): #resizes image
     return image.resize((x, y), Image.ANTIALIAS)
 
-def crop_image(image, left, right, top, bottom):
+
+def crop_image(image, left, right, top, bottom): #crops image
     return image.crop((left, top, right, bottom))
+
 
 #Icon class for adding and subtracting values
 class icon:
@@ -51,6 +56,10 @@ class icon:
         )
 
         return self
+    
+    def delete(self):
+        self.screen.delete(self.cropped_image)
+
 
 #military meter, inherits __add__ from icon class
 class military(icon):
@@ -65,6 +74,7 @@ class military(icon):
         self.resize = 40, 50
         self.place = 10, 60
 
+
 #money meter, inherits __add__ from icon class
 class money(icon):
     def __init__(self, screen):
@@ -77,6 +87,7 @@ class money(icon):
         self.cropped_image = None
         self.resize = 40, 50
         self.place = 50, 60
+
 
 #nature meter, inherits __add__ from icon class
 class nature(icon):
@@ -91,6 +102,7 @@ class nature(icon):
         self.resize = 40, 50
         self.place = 90, 60
 
+
 #people meter, inherits __add__ from icon class
 class people(icon):
     def __init__(self, screen):
@@ -103,6 +115,7 @@ class people(icon):
         self.cropped_image = None
         self.resize = 70, 50
         self.place = 120, 60
+
 
 class card:
     def __init__(self, screen):
@@ -180,6 +193,18 @@ class card:
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
         del self
 
+
+def draw_arrows(screen):
+    left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
+    right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
+    left1 = pack(left)
+    right1 = pack(right)
+    leftButton = screen.create_image(320, 360, image = left1)
+    rightButton = screen.create_image(900, 360, image = right1)
+    screen.update()
+    return leftButton, rightButton
+
+
 def runGame():
     myInterface = Tk()
     screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
@@ -188,18 +213,19 @@ def runGame():
 
     copyFile('choices.json', 'choices-user.json')
 
-    mil, mon, nat, peo = military(screen), money(screen), nature(screen), people(screen)
-    #military, money, nature, people
-
+    gun, dollar, leaf, person = military(screen), money(screen), nature(screen), people(screen)
 
     for i in range(25):
-        mil += 2
-        mon += 2
-        nat += 2
-        peo += 2
+        gun.delete(), dollar.delete(), leaf.delete(), person.delete()
+        gun += 2
+        dollar += 2
+        leaf += 2
+        person += 2
 
         screen.update()
         sleep(0.03)
+
+    leftArrow, rightArrow = draw_arrows(screen)
 
     while True:
         card1 = card(screen)
