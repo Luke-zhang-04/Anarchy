@@ -28,18 +28,10 @@ def resize_image(image, x, y):
 def crop_image(image, left, right, top, bottom):
     return image.crop((left, top, right, bottom))
 
-#no point in trying inheritance; may do more harm than good
-class military:
-    def __init__(self, screen):
-        self.screen = screen
-        image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50)
-        self.image_file = pack(image_file)
-        self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
-        self.current = 0
-        self.cropped_image = None
-
+#Icon class for adding and subtracting values
+class icon:
     def __add__(self, other):
-        cropped_image_file = resize_image(Image.open("pictures/icons/gun-white.png"), 40, 50)
+        cropped_image_file = resize_image(Image.open("pictures/icons/" + self.filled_file_name), self.resize[0], self.resize[1])
         width, height = cropped_image_file.size
 
         increment = height/100
@@ -55,12 +47,26 @@ class military:
         self.screen.delete(self.cropped_image)
 
         self.cropped_image = self.screen.create_image(
-            10, 60, anchor = 'sw', image = self.cropped_image_file
+            self.place[0], self.place[1], anchor = 'sw', image = self.cropped_image_file
         )
 
         return self
 
-class money:
+#military meter, inherits __add__ from icon class
+class military(icon):
+    def __init__(self, screen):
+        self.screen = screen
+        self.filled_file_name = "gun-white.png"
+        image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50)
+        self.image_file = pack(image_file)
+        self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
+        self.current = 0
+        self.cropped_image = None
+        self.resize = 40, 50
+        self.place = 10, 60
+
+#money meter, inherits __add__ from icon class
+class money(icon):
     def __init__(self, screen):
         self.screen = screen
         image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
@@ -68,26 +74,11 @@ class money:
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
         self.current = 0
         self.cropped_image = None
-    
-    def __add__(self, other):
-        cropped_image_file = resize_image(Image.open("pictures/icons/money-white.png"), 40, 50)
-        width, height = cropped_image_file.size
+        self.resize = 40, 50
+        self.place = 50, 60
 
-        increment = height/100
-        self.current = self.current + other if self.current + other < 100 else 100
-        self.amt = height-self.current*increment
-
-        if self.amt > height: self.amt = amt
-
-        print(self.amt, other, self.amt+other)
-
-        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
-        self.cropped_image_file = pack(cropped_image_file)
-        self.screen.delete(self.cropped_image)
-        self.cropped_image = self.screen.create_image(50, 60, anchor = 'sw', image = self.cropped_image_file)
-        return self
-
-class nature:
+#nature meter, inherits __add__ from icon class
+class nature(icon):
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40, 50)
@@ -95,26 +86,11 @@ class nature:
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
         self.current = 0
         self.cropped_image = None
-    
-    def __add__(self, other):
-        cropped_image_file = resize_image(Image.open("pictures/icons/plant-white.png"), 40, 50)
-        width, height = cropped_image_file.size
+        self.resize = 40, 50
+        self.place = 90, 60
 
-        increment = height/100
-        self.current = self.current + other if self.current + other < 100 else 100
-        self.amt = height-self.current*increment
-
-        if self.amt > height: self.amt = amt
-
-        print(self.amt, other, self.amt+other)
-
-        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
-        self.cropped_image_file = pack(cropped_image_file)
-        self.screen.delete(self.cropped_image)
-        self.cropped_image = self.screen.create_image(90, 60, anchor = 'sw', image = self.cropped_image_file)
-        return self
-
-class people:
+#people meter, inherits __add__ from icon class
+class people(icon):
     def __init__(self, screen):
         self.screen = screen
         self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70, 50)
@@ -122,24 +98,8 @@ class people:
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
         self.current = 0
         self.cropped_image = None
-    
-    def __add__(self, other):
-        cropped_image_file = resize_image(Image.open("pictures/icons/people-white.png"), 70, 50)
-        width, height = cropped_image_file.size
-
-        increment = height/100
-        self.current = self.current + other if self.current + other < 100 else 100
-        self.amt = height-self.current*increment
-
-        if self.amt > height: self.amt = amt
-
-        print(self.amt, other, self.amt+other)
-
-        cropped_image_file = crop_image(cropped_image_file, 0, 70, self.amt, 50)
-        self.cropped_image_file = pack(cropped_image_file)
-        self.screen.delete(self.cropped_image)
-        self.cropped_image = self.screen.create_image(120, 60, anchor = 'sw', image = self.cropped_image_file)
-        return self
+        self.resize = 70, 50
+        self.place = 120, 60
 
 class card:
     def __init__(self, screen):
@@ -213,6 +173,7 @@ class card:
         )
 
     def __del__(self):
+        #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
         del self
 

@@ -147,7 +147,7 @@
         "economy": [
             {
                 "title": "Secretary of the Treasury Owens",
-                "image": ["economic.png", 225, 190]
+                "image": ["pictures/economic.png", 225, 190]
             },
             {
                 "description": "We need to raise taxes to fund the government or we're going to run into a lot of debt",
