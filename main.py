@@ -42,7 +42,7 @@ class icon:
 
         print(self.amt, other, self.amt+other)
 
-        cropped_image_file = crop_image(cropped_image_file, 0, 40, self.amt, 50)
+        cropped_image_file = crop_image(cropped_image_file, 0, self.resize[0], self.amt, self.resize[1])
         self.cropped_image_file = pack(cropped_image_file)
         self.screen.delete(self.cropped_image)
 
@@ -69,6 +69,7 @@ class military(icon):
 class money(icon):
     def __init__(self, screen):
         self.screen = screen
+        self.filled_file_name = "money-white.png"
         image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
         self.image_file = pack(image_file)
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
@@ -81,6 +82,7 @@ class money(icon):
 class nature(icon):
     def __init__(self, screen):
         self.screen = screen
+        self.filled_file_name = "plant-white.png"
         self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
@@ -93,6 +95,7 @@ class nature(icon):
 class people(icon):
     def __init__(self, screen):
         self.screen = screen
+        self.filled_file_name = "people-white.png"
         self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
