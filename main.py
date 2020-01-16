@@ -45,8 +45,6 @@ class icon:
 
         if self.amt > height: self.amt = amt
 
-        print(self.amt, other, self.amt+other)
-
         cropped_image_file = crop_image(cropped_image_file, 0, self.resize[0], self.amt, self.resize[1])
         self.cropped_image_file = pack(cropped_image_file)
         self.screen.delete(self.cropped_image)
@@ -121,9 +119,9 @@ class card:
     def __init__(self, screen):
         self.body = self.top_area = self.image_file = self.image_file = self.image = self.person = self.text = None
         self.screen = screen
+        self.decided = False
         with open('choices.json') as fin:
             data = json.load(fin)
-            print(list(data['choices']), "\n\n", data['choices'])
             situation = choice(list(data['choices']))
             situation = data['choices'][situation]
             self.person = situation[0]
@@ -188,63 +186,71 @@ class card:
             text = self.situation['description']
         )
 
-    def user_click_yes(self, event):
-        print()
-    
-    def user_click_no(self, event):
-        print()
-
-    def __del__(self):
-        #delete card
+    def __del__(self): #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
         del self
 
 
-def draw_arrows(screen):
-    left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
-    right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
-    left1 = pack(left)
-    right1 = pack(right)
-    leftButton = screen.create_image(320, 360, image = left1)
-    rightButton = screen.create_image(900, 360, image = right1)
-    screen.update()
-    return leftButton, rightButton, left1, right1
+class anarchy():
+    def __init__(self):
+        myInterface = Tk()
+        self.screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
+        self.screen.pack()
+        self.screen.update()
 
+        copyFile('choices.json', 'choices-user.json')
 
-def runGame():
-    myInterface = Tk()
-    screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
-    screen.pack()
-    screen.update()
+        self.gun, self.dollar, self.leaf, self.person = military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
 
-    copyFile('choices.json', 'choices-user.json')
+        for i in range(25):
+            self.gun.delete(), self.dollar.delete(), self.leaf.delete(), self.person.delete()
+            self.gun += 2
+            self.dollar += 2
+            self.leaf += 2
+            self.person += 2
 
-    gun, dollar, leaf, person = military(screen), money(screen), nature(screen), people(screen)
+            self.screen.update()
+            sleep(0.03)
+    
+    def user_click_no(self, event):
+        addition = self.card1.situation["false"]
+        self.card1.decided = True
+        self.gun += addition['military']
+        self.dollar += addition['economy']
+        self.leaf += addition['nature']
+        self.person += addition['people']
+    
+    def user_click_yes(self, event):
+        addition = self.card1.situation["true"]
+        self.card1.decided = True
+        self.gun += addition['military']
+        self.dollar += addition['economy']
+        self.leaf += addition['nature']
+        self.person += addition['people']
 
-    for i in range(25):
-        gun.delete(), dollar.delete(), leaf.delete(), person.delete()
-        gun += 2
-        dollar += 2
-        leaf += 2
-        person += 2
+    def draw_arrows(self):
+        self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
+        self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
+        self.leftPhotoImg = pack(self.left)
+        self.rightPhotoImg = pack(self.right)
+        self.leftButton = self.screen.create_image(320, 360, image = self.leftPhotoImg)
+        self.rightButton = self.screen.create_image(900, 360, image = self.rightPhotoImg)
+        self.screen.update()
 
-        screen.update()
-        sleep(0.03)
+    def run(self):
+        self.draw_arrows()
 
-    leftArrow, rightArrow , leftImage, rightImage = draw_arrows(screen)
+        while True:
+            self.card1 = card(self.screen)
+            self.card1.draw()
+            self.screen.tag_bind(self.leftButton, "<Button-1>", self.user_click_no)
+            self.screen.tag_bind(self.rightButton, "<Button-1>", self.user_click_yes)
+            while not self.card1.decided:
+                self.screen.update()
+                sleep(0.01)
 
-    while True:
-        card1 = card(screen)
-        card1.draw()
-        screen.tag_bind(leftArrow, "<Button-1>", card1.user_click_no)
-        screen.tag_bind(rightArrow, "<Button-1>", card1.user_click_yes)
-
-        screen.update()
-        sleep(2)
-        del card1
-
-    screen.update()
-    screen.mainloop()
+            del self.card1
 
 if __name__ == "__main__":
-    runGame()
+    game = anarchy()
+    game.run()
