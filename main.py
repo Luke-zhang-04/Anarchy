@@ -2,7 +2,7 @@ from lib.install_packages import install #from https://github.com/kertox662/Pyth
 install()
 from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 
-from tkinter import Tk, Canvas, PhotoImage, Button
+from tkinter import Tk, Canvas, PhotoImage
 from time import sleep
 from random import choice
 import json
@@ -57,7 +57,7 @@ class icon:
 
         return self
     
-    def delete(self):
+    def delete(self): #we don't want to use __del__ because we only want to screen.delete()
         self.screen.delete(self.cropped_image)
 
 
@@ -188,6 +188,12 @@ class card:
             text = self.situation['description']
         )
 
+    def user_click_yes(self, event):
+        print()
+    
+    def user_click_no(self, event):
+        print()
+
     def __del__(self):
         #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
@@ -202,7 +208,7 @@ def draw_arrows(screen):
     leftButton = screen.create_image(320, 360, image = left1)
     rightButton = screen.create_image(900, 360, image = right1)
     screen.update()
-    return leftButton, rightButton
+    return leftButton, rightButton, left1, right1
 
 
 def runGame():
@@ -225,11 +231,13 @@ def runGame():
         screen.update()
         sleep(0.03)
 
-    leftArrow, rightArrow = draw_arrows(screen)
+    leftArrow, rightArrow , leftImage, rightImage = draw_arrows(screen)
 
     while True:
         card1 = card(screen)
         card1.draw()
+        screen.tag_bind(leftArrow, "<Button-1>", card1.user_click_no)
+        screen.tag_bind(rightArrow, "<Button-1>", card1.user_click_yes)
 
         screen.update()
         sleep(2)

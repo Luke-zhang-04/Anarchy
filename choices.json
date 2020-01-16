@@ -8,13 +8,11 @@
             {
                 "description": "Pharmaceutical want to use animal testing for their new drugs, and want government approval.",
                 "true": {
-                    "message": "They can",
                     "people": 0,
                     "military": 0,
                     "economy": 10,
                     "nature": -10
                 }, "false": {
-                    "message": "Under no circumstances can they do so",
                     "people": 0,
                     "military": 0,
                     "economy": -10,
@@ -30,13 +28,11 @@
             {
                 "description": "Our hospitals are underfunded. Our equipment is outdated and we are constantly short on staff. We want the government to invest $100 000 into better healthcare.",
                 "true": {
-                    "message": "Consider it done",
                     "people": 30,
                     "military": 0,
                     "economy": -20,
                     "nature": 0
                 }, "false": {
-                    "message": "No",
                     "people": -15,
                     "military": 0,
                     "economy": 0,
