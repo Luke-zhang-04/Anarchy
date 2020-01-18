@@ -40,10 +40,14 @@ class icon:
         width, height = cropped_image_file.size
 
         increment = height/100
-        self.current = self.current + other if self.current + other < 100 else 100
-        self.amt = height-self.current*increment
+        if self.current + other > 100:
+            self.current = 100
+        elif self.current + other < 0:
+            self.current = 0
+        else:
+            self.current += other
 
-        if self.amt > height: self.amt = amt
+        self.amt = height-self.current*increment
 
         cropped_image_file = crop_image(cropped_image_file, 0, self.resize[0], self.amt, self.resize[1])
         self.cropped_image_file = pack(cropped_image_file)
@@ -120,6 +124,7 @@ class card:
         self.body = self.top_area = self.image_file = self.image_file = self.image = self.person = self.text = None
         self.screen = screen
         self.decided = False
+        self.choice = None
         with open('choices.json') as fin:
             data = json.load(fin)
             situation = choice(list(data['choices']))
@@ -177,13 +182,13 @@ class card:
 
         #create text of person speaking
         self.person = screen.create_text(
-            dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.person['title']
+            dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.person['title'], font=("Courier")
         )
 
         #create text of persons name and title
         self.text = screen.create_text(
             dimensions[0]+50, dimensions[1]+300, width = (dimensions[2]-50)-(dimensions[0]+50), anchor = "nw",
-            text = self.situation['description']
+            text = self.situation['description'], font=("Courier")
         )
 
     def __del__(self): #delete card
@@ -197,6 +202,7 @@ class anarchy():
         self.screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
         self.screen.pack()
         self.screen.update()
+        self.week = 0
 
         copyFile('choices.json', 'choices-user.json')
 
@@ -213,20 +219,25 @@ class anarchy():
             sleep(0.03)
     
     def user_click_no(self, event):
-        addition = self.card1.situation["false"]
+        #addition = self.card1.situation["false"]
         self.card1.decided = True
+        self.card1.choice = False
+        '''
         self.gun += addition['military']
         self.dollar += addition['economy']
         self.leaf += addition['nature']
         self.person += addition['people']
-    
+        '''
+
     def user_click_yes(self, event):
-        addition = self.card1.situation["true"]
-        self.card1.decided = True
+        #addition = self.card1.situation["true"]
+        self.card1.choice = self.card1.decided = True
+        '''
         self.gun += addition['military']
         self.dollar += addition['economy']
         self.leaf += addition['nature']
         self.person += addition['people']
+        '''
 
     def draw_arrows(self):
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
@@ -238,18 +249,28 @@ class anarchy():
         self.screen.update()
 
     def run(self):
-        self.draw_arrows()
-
         while True:
+            self.draw_arrows()
             self.card1 = card(self.screen)
             self.card1.draw()
             self.screen.tag_bind(self.leftButton, "<Button-1>", self.user_click_no)
             self.screen.tag_bind(self.rightButton, "<Button-1>", self.user_click_yes)
+
+            numWeeks = self.screen.create_text(
+                1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
+            )
+
+            self.screen.update()
             while not self.card1.decided:
                 self.screen.update()
                 sleep(0.01)
+        
+            comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
+            count = 0
 
             del self.card1
+            self.screen.delete(self.leftButton, self.rightButton, numWeeks)
+            self.week += 1
 
 if __name__ == "__main__":
     game = anarchy()

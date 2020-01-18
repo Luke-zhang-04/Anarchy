@@ -18,6 +18,20 @@
                     "economy": -10,
                     "nature": 10
                 }
+            },
+            {
+                "description": "PETA is looking to ban commercial farms. Can we do this?",
+                "true": {
+                    "people": -10,
+                    "military": 0,
+                    "economy": -10,
+                    "nature": 15
+                }, "false": {
+                    "people": 0,
+                    "military": 0,
+                    "economy": 15,
+                    "nature": -10
+                }
             }
         ],
         "doctor": [
@@ -36,6 +50,20 @@
                     "people": -15,
                     "military": 0,
                     "economy": 0,
+                    "nature": 0
+                }
+            },
+            {
+                "description": "We want to build a new hospital. There's not enough and people have to drive long distances for the nearest hospital.",
+                "true": {
+                    "people": 20,
+                    "military": 0,
+                    "economy": -20,
+                    "nature": 0
+                }, "false": {
+                    "people": -20,
+                    "military": 0,
+                    "economy": 20,
                     "nature": 0
                 }
             }
