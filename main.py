@@ -7,6 +7,7 @@ from random import choice
 import json
 
 
+'''
 def copyFile(copyFrom, copyTo):
     source = open(copyFrom, 'r')
     read = source.readlines()
@@ -18,6 +19,7 @@ def copyFile(copyFrom, copyTo):
         out.write(i)
     
     out.close()
+'''
 
 
 class card:
@@ -26,8 +28,8 @@ class card:
         self.screen = screen
         self.decided = False
         self.choice = None
-        with open('choices.json') as fin:
-            data = json.load(fin)
+        with open('choices.json') as self.fin:
+            data = json.load(self.fin)
             situation = choice(list(data['choices']))
             situation = data['choices'][situation]
             self.person = situation[0]
@@ -111,19 +113,24 @@ class card:
         self.elements = [self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area]
 
     def __del__(self): #delete card
+        self.fin.close()
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
         del self
 
 
 class anarchy():
     def __init__(self):
-        myInterface = Tk()
-        self.screen = Canvas(myInterface, width=1280, height=720, background = "gray9")
+        self.root = Tk()
+        self.screen = Canvas(self.root, width=1280, height=720, background = "gray9")
         self.screen.pack()
         self.screen.update()
+
         self.week = 0
 
-        copyFile('choices.json', 'choices-user.json')
+        #copyFile('choices.json', 'choices-user.json')
+
+        with open('choices.json', 'r') as data_file:
+            self.choices = json.load(data_file)
 
         self.gun, self.dollar, self.leaf, self.person = (
             military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
@@ -201,13 +208,45 @@ class anarchy():
         
         return change
 
+    def check_values(self):
+        kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44)}
+        args = int(self.screen['width'])//2, int(self.screen['height'])//2
+
+        def endgame(*args, **kwargs):
+            self.screen.create_text(*args, **kwargs)
+            self.screen.delete(self.leftButton, self.rightButton)
+            self.screen.update()
+            sleep(5)
+            exit()
+
+        if self.gun.current == 0:
+            kwargs['text'] = "Military too weak, you loose"
+            endgame(args, kwargs)
+        elif self.dollar.current == 0:
+            kwargs['text'] = "Greece v2 electric boogaloo"
+            endgame(args, kwargs)
+        elif self.person.current == 0:
+            kwargs['text'] = "Rebelion"
+            endgame(args, kwargs)
+        elif self.leaf.current == 0:
+            kwargs['text'] = "Turtles died"
+            endgame(args, kwargs)
+
     def run(self):
         while True:
             self.draw_arrows()
             self.card1 = card(self.screen)
             self.card1.draw()
+
             self.screen.tag_bind(self.leftButton, "<Button-1>", self.user_click_no)
+            self.root.bind("<Left>", self.user_click_no)
+            #self.screen.tag_bind(self.leftButton, "<enter>", self.enter_no)
+            #self.screen.tag_bind(self.leftButton, "<leave>", self.leave_no)
+
             self.screen.tag_bind(self.rightButton, "<Button-1>", self.user_click_yes)
+            self.root.bind("<Right>", self.user_click_yes)
+            #self.screen.tag_bind(self.rightButton, "<enter>", self.enter_yes)
+            #self.screen.tag_bind(self.rightButton, "<leave>", self.enter_no)
 
             numWeeks = self.screen.create_text(
                 1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
@@ -241,6 +280,8 @@ class anarchy():
 
                 self.screen.update()
                 sleep(0.01)
+
+            self.check_values()
 
             del self.card1
             self.screen.delete(self.leftButton, self.rightButton, numWeeks)
