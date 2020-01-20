@@ -59,11 +59,15 @@ class icon:
 
         return self
     
-    def delete(self): #we don't want to use __del__ because we only want to screen.delete()
+    def __sub__(self, other):
+        self += other * -1
+        return self
+
+    def canvas_delete(self): #we don't want to use __del__ because we only want to screen.delete()
         self.screen.delete(self.cropped_image)
 
-
-#military meter, inherits __add__ from icon class
+#ALL 4 CLASSES BELOW INHERIT FROM ICON CLASS
+#military meter, 
 class military(icon):
     def __init__(self, screen):
         self.screen = screen
@@ -71,13 +75,14 @@ class military(icon):
         image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50)
         self.image_file = pack(image_file)
         self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file)
+
         self.current = 0
         self.cropped_image = None
         self.resize = 40, 50
         self.place = 10, 60
 
 
-#money meter, inherits __add__ from icon class
+#money meter
 class money(icon):
     def __init__(self, screen):
         self.screen = screen
@@ -85,13 +90,14 @@ class money(icon):
         image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50)
         self.image_file = pack(image_file)
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file)
+
         self.current = 0
         self.cropped_image = None
         self.resize = 40, 50
         self.place = 50, 60
 
 
-#nature meter, inherits __add__ from icon class
+#nature meter
 class nature(icon):
     def __init__(self, screen):
         self.screen = screen
@@ -99,13 +105,14 @@ class nature(icon):
         self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file)
+
         self.current = 0
         self.cropped_image = None
         self.resize = 40, 50
         self.place = 90, 60
 
 
-#people meter, inherits __add__ from icon class
+#people meter
 class people(icon):
     def __init__(self, screen):
         self.screen = screen
@@ -113,6 +120,7 @@ class people(icon):
         self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70, 50)
         self.image_file = pack(self.image_file)
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file)
+        
         self.current = 0
         self.cropped_image = None
         self.resize = 70, 50
@@ -206,10 +214,12 @@ class anarchy():
 
         copyFile('choices.json', 'choices-user.json')
 
-        self.gun, self.dollar, self.leaf, self.person = military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
+        self.gun, self.dollar, self.leaf, self.person = (
+            military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
+        )
 
         for i in range(25):
-            self.gun.delete(), self.dollar.delete(), self.leaf.delete(), self.person.delete()
+            self.gun.canvas_delete(), self.dollar.canvas_delete(), self.leaf.canvas_delete(), self.person.canvas_delete()
             self.gun += 2
             self.dollar += 2
             self.leaf += 2
@@ -247,6 +257,38 @@ class anarchy():
         self.leftButton = self.screen.create_image(320, 360, image = self.leftPhotoImg)
         self.rightButton = self.screen.create_image(900, 360, image = self.rightPhotoImg)
         self.screen.update()
+    
+    def animate_icons(self, comparison):
+        change = False
+        if self.person.current > comparison['people']:
+            change = True
+            self.person -= 1
+        elif self.person.current < comparison['people']:
+            change = True
+            self.person += 1
+
+        if self.gun.current > comparison['military']:
+            change = True
+            self.gun -= 1
+        elif self.gun.current < comparison['military']:
+            change = True
+            self.gun += 1 
+        
+        if self.leaf.current > comparison['nature']:
+            change = True
+            self.leaf -= 1
+        elif self.leaf.current < comparison['nature']:
+            change = True
+            self.leaf += 1
+        
+        if self.dollar.current > comparison['economy']:
+            change = True
+            self.dollar -= 1
+        elif self.dollar.current < comparison['economy']:
+            change = True
+            self.dollar += 1
+        
+        return change
 
     def run(self):
         while True:
@@ -266,7 +308,17 @@ class anarchy():
                 sleep(0.01)
         
             comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
-            count = 0
+            targets = {}
+            targets["people"] = comparison["people"] + self.person.current
+            targets["military"] = comparison["military"] + self.gun.current
+            targets["economy"] = comparison["economy"] + self.dollar.current
+            targets["nature"] = comparison["nature"] + self.leaf.current
+            
+            while True:
+                if not self.animate_icons(targets): break
+                self.screen.update()
+                sleep(0.01)
+
 
             del self.card1
             self.screen.delete(self.leftButton, self.rightButton, numWeeks)
