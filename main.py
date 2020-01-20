@@ -151,6 +151,22 @@ class card:
 
         return screen.create_polygon(points, **kwargs, smooth=True)
 
+    def move(self, direction):
+        if direction.lower() in ["r", "right", "e", "east"]:
+            xSpeed = 10
+            ySpeed = 0
+        elif direction.lower() in ["l", "left", "w", "west"]:
+            xSpeed = -10
+            ySpeed = 0
+        
+        for element in self.elements:
+            self.screen.move(element, xSpeed, ySpeed)
+        
+        if self.screen.coords(self.body)[-2] > self.screen.winfo_width() or self.screen.coords(self.body)[8] < 0:
+            return True
+        else:
+            return False
+
     def draw(self):
         screen = self.screen
         width, height = screen.winfo_width(), screen.winfo_height()
@@ -198,6 +214,8 @@ class card:
             dimensions[0]+50, dimensions[1]+300, width = (dimensions[2]-50)-(dimensions[0]+50), anchor = "nw",
             text = self.situation['description'], font=("Courier")
         )
+
+        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area]
 
     def __del__(self): #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
@@ -318,7 +336,12 @@ class anarchy():
                 if not self.animate_icons(targets): break
                 self.screen.update()
                 sleep(0.01)
-
+            
+            direction = "r" if self.card1.choice else "l"
+            while True:
+                if self.card1.move(direction): break
+                self.screen.update()
+                sleep(0.01)
 
             del self.card1
             self.screen.delete(self.leftButton, self.rightButton, numWeeks)
