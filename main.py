@@ -121,7 +121,8 @@ class card:
 class anarchy():
     def __init__(self):
         self.root = Tk()
-        self.screen = Canvas(self.root, width=1280, height=720, background = "gray9")
+        self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9")
         self.screen.pack()
         self.screen.update()
 
@@ -172,8 +173,9 @@ class anarchy():
         self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
         self.leftPhotoImg = pack(self.left)
         self.rightPhotoImg = pack(self.right)
-        self.leftButton = self.screen.create_image(320, 360, image = self.leftPhotoImg)
-        self.rightButton = self.screen.create_image(960, 360, image = self.rightPhotoImg)
+        card = self.screen.coords(self.card1.body)[-2], self.screen.coords(self.card1.body)[8]
+        self.leftButton = self.screen.create_image(card[0]-200, 360, image = self.leftPhotoImg)
+        self.rightButton = self.screen.create_image(card[1]+200, 360, image = self.rightPhotoImg)
         self.screen.update()
     
     def animate_icons(self, comparison):
@@ -232,11 +234,11 @@ class anarchy():
             kwargs['text'] = "Turtles died"
             endgame(args, kwargs)
 
-    def run(self):
+    def __call__(self):
         while True:
-            self.draw_arrows()
             self.card1 = card(self.screen)
             self.card1.draw()
+            self.draw_arrows()
 
             self.screen.tag_bind(self.leftButton, "<Button-1>", self.user_click_no)
             self.root.bind("<Left>", self.user_click_no)
@@ -290,4 +292,4 @@ class anarchy():
 
 if __name__ == "__main__":
     game = anarchy()
-    game.run()
+    game()
