@@ -153,10 +153,10 @@ class card:
 
     def move(self, direction):
         if direction.lower() in ["r", "right", "e", "east"]:
-            xSpeed = 10
+            xSpeed = 25
             ySpeed = 0
         elif direction.lower() in ["l", "left", "w", "west"]:
-            xSpeed = -10
+            xSpeed = -25
             ySpeed = 0
         
         for element in self.elements:
@@ -331,15 +331,18 @@ class anarchy():
             targets["military"] = comparison["military"] + self.gun.current
             targets["economy"] = comparison["economy"] + self.dollar.current
             targets["nature"] = comparison["nature"] + self.leaf.current
-            
-            while True:
-                if not self.animate_icons(targets): break
-                self.screen.update()
-                sleep(0.01)
-            
+
             direction = "r" if self.card1.choice else "l"
+            move_finished = icons_finished = False
+            
             while True:
-                if self.card1.move(direction): break
+                if self.card1.move(direction):
+                    move_finished = True
+                if not self.animate_icons(targets):
+                    icons_finished = True
+                
+                if move_finished and icons_finished: break
+
                 self.screen.update()
                 sleep(0.01)
 
