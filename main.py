@@ -9,13 +9,18 @@ import json
 
 def copyFile(copyFrom, copyTo):
     source = open(copyFrom, 'r')
-    read = source.readlines()
+    #read = source.readlines()
+    read = json.load(source)
     source.close()
 
     out = open(copyTo, 'w')
 
+    '''
     for i in read:
         out.write(i)
+    '''
+
+    json.dump(read, out)
     
     out.close()
 
@@ -26,12 +31,27 @@ class card:
         self.screen = screen
         self.decided = False
         self.choice = None
-        with open('choices.json') as self.fin:
-            data = json.load(self.fin)
+        with open('choices-user.json') as fin:
+            data = json.load(fin)
             situation = choice(list(data['choices']))
+            self.whole = situation
             situation = data['choices'][situation]
             self.person = situation[0]
             self.situation = choice(situation[1:])
+
+    def delete_key(self):
+        with open('choices-user.json', 'r') as data_file:
+            data = json.load(data_file)
+
+        if len(self.whole) == 2:
+            del data["choices"][self.whole]
+        else:
+            print("\n***", self.whole, "\n***", self.situation)
+            data["choices"][self.whole].remove(self.situation)
+
+        with open('choices-user.json', 'w') as data_file:
+            data = json.dump(data, data_file)
+        data_file.close()
 
     @staticmethod
     def round_rectangle(screen, x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
@@ -98,7 +118,7 @@ class card:
         )
 
         #create text of person speaking
-        self.person = screen.create_text(
+        self.person_image = screen.create_text(
             dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.person['title'], font=("Courier")
         )
 
@@ -108,15 +128,14 @@ class card:
             text = self.situation['description'], font=("Courier")
         )
 
-        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area]
+        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person_image, self.text, self.image_area]
 
     def __del__(self): #delete card
-        self.fin.close()
-        self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person, self.text, self.image_area)
+        self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person_image, self.text, self.image_area)
         del self
 
 
-class user():
+class user:
     def click_no(self, event):
         self.card1.decided = True
         self.card1.choice = False
@@ -125,10 +144,12 @@ class user():
     def click_yes(self, event):
         self.card1.choice = self.card1.decided = True
         self.screen.delete(self.temp_text)
+        self.card1.delete_key()
 
     def enter_no(self, event):
         cords = self.screen.coords(self.leftButton)
         self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.negative_word, fill = "white", font = ("Courier", 15))
+        self.card1.delete_key()
     
     def enter_yes(self, event):
         cords = self.screen.coords(self.rightButton)

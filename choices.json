@@ -40,7 +40,12 @@
             {
                 "description": "We want permission to use nuclear power for our projects, but the head scientist won't let us.",
                 "true": {"people": 0, "military": 10, "economy": 10, "nature": -10},
-                "false": { "people": 0, "military": 0, "economy": -20, "nature": 10}
+                "false": {"people": 0, "military": 0, "economy": -20, "nature": 10}
+            },
+            {
+                "description": "We've developed a potientially life-saving drug, but we need to test it on animals first for safety.",
+                "true": {"people": 10, "military": 0, "economy": 10, "nature": -20},
+                "false": {"people": -10, "military": 0, "economy": 0, "nature": 15}
             }
         ],
         "citizen": [
@@ -50,19 +55,29 @@
             },
             {
                 "description": "Can we get rid of the homeless people? All they do is take up space, litter, and defacate on the streets!",
-                "true": { "people": 20, "military": 0, "economy": 0, "nature": 0},
-                "false": { "people": 0, "military": 0, "economy": 0, "nature": 0}
+                "true": {"people": 20, "military": 0, "economy": 0, "nature": 0},
+                "false": {"people": 0, "military": 0, "economy": 0, "nature": 0}
+            },
+            {
+                "description": "The factories are making us sick! Take them down!",
+                "true": {"people": 20, "military": 0, "economy": -20, "nature": 0},
+                "false": {"people": -10, "military": 0, "economy": 15, "nature": 0}
             }
         ],
         "CIA": [
             {
-                "title": "Director of National Intellegence\nSmith",
+                "title": "Director of National \nIntellegence Smith",
                 "image": ["pictures/spy.png", 125, 125]
             },
             {
-                "description": "\nWe need more security measures. We are concerned about threats appearning from within the countries. Let us imlpement these measures.",
-                "true": { "people": -10, "military": 20, "economy": -15, "nature": 0},
-                "false": { "people": 20, "military": -10, "economy": 10, "nature": 0}
+                "description": "\nWe are concerned about certain extremist groups within the country. To maintain safety of the nation, we need to comprimise certain civil libreties of the citizens.",
+                "true": {"people": -10, "military": 20, "economy": -15, "nature": 0},
+                "false": {"people": 20, "military": -10, "economy": 10, "nature": 0}
+            },
+            {
+                "description": "\nCIA wants to get rid of the protesters outside. They've been a pain to deal with.",
+                "true": {"people": -20, "military": 20, "economy": 0, "nature": 0},
+                "false": {"people": 20, "military": 0, "economy": 10, "nature": 0}
             }
         ],
         "foreign": [
@@ -71,9 +86,14 @@
                 "image": ["pictures/secOfState.png", 150, 125]
             },
             {
-                "description": "Foreign Affairs",
-                "true": { "people": 0, "military": 15, "economy": -15, "nature": 0},
-                "false": { "people": 0, "military": -15, "economy": 15, "nature": 0}
+                "description": "We need to sanction Russia before they get out of hand",
+                "true": {"people": 0, "military": 15, "economy": -15, "nature": 0},
+                "false": {"people": 0, "military": -15, "economy": 15, "nature": 0}
+            },
+            {
+                "description": "Can we search for survivors outside of our borders?",
+                "true": {"people": 15, "military": -10, "economy": -15, "nature": 0},
+                "false": {"people": -15, "military": 10, "economy": 15, "nature": 0}
             }
         ],
         "military": [
@@ -83,19 +103,29 @@
             },
             {
                 "description": "We need to increase our defense budget and spend more on the military. Foreign powers are becoming stronger and will soon be a real threat towards us. We need to be able to defend outselves.",
-                "true": { "people": 0, "military": 20, "economy": -15, "nature": -5},
-                "false": { "people": 0, "military": -10, "economy": 10, "nature": 0}
+                "true": {"people": 0, "military": 20, "economy": -15, "nature": -5},
+                "false": {"people": 0, "military": -10, "economy": 10, "nature": 0}
+            },
+            {
+                "description": "We want more fighter jets. The ones we have are worn out and outdated",
+                "true": {"people": 0, "military": 20, "economy": -15, "nature": -5},
+                "false": {"people": 0, "military": -10, "economy": 10, "nature": 0}
             }
         ],
         "economy": [
             {
-                "title": "Secretary of the Treasury Owens",
+                "title": "Secretary of the Treasury \nOwens",
                 "image": ["pictures/economic.png", 125, 125]
             },
             {
-                "description": "We need to raise taxes to fund the government or we're going to run into a lot of debt",
-                "true": { "people": -10, "military": 0, "economy": 15, "nature": 0},
-                "false": { "people": 10, "military": 0, "economy": -10, "nature": 0}
+                "description": "\nWe need to raise taxes to fund the government or we're going to run into a lot of debt",
+                "true": {"people": -10, "military": 0, "economy": 15, "nature": 0},
+                "false": {"people": 10, "military": 0, "economy": -10, "nature": 0}
+            },
+            {
+                "description": "\nLets cut social programs before we go bankrupt!",
+                "true": {"people": -10, "military": 0, "economy": 15, "nature": 0},
+                "false": {"people": 15, "military": 0, "economy": -10, "nature": 0}
             }
         ]
     }
