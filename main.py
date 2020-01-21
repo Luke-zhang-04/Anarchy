@@ -118,25 +118,13 @@ class card:
 
 class user():
     def click_no(self, event):
-        #addition = self.card1.situation["false"]
         self.card1.decided = True
         self.card1.choice = False
-        '''
-        self.gun += addition['military']
-        self.dollar += addition['economy']
-        self.leaf += addition['nature']
-        self.person += addition['people']
-        '''
+        self.screen.delete(self.temp_text)
 
     def click_yes(self, event):
-        #addition = self.card1.situation["true"]
         self.card1.choice = self.card1.decided = True
-        '''
-        self.gun += addition['military']
-        self.dollar += addition['economy']
-        self.leaf += addition['nature']
-        self.person += addition['people']
-        '''
+        self.screen.delete(self.temp_text)
 
     def enter_no(self, event):
         cords = self.screen.coords(self.leftButton)
@@ -288,14 +276,13 @@ class anarchy(user):
             direction = "r" if self.card1.choice else "l"
             move_finished = icons_finished = False
             
-            #while True:
-            while move_finished and icons_finished:
+            while True:
                 if self.card1.move(direction):
                     move_finished = True
                 if not self.animate_icons(targets):
                     icons_finished = True
                 
-                #if move_finished and icons_finished: break
+                if move_finished and icons_finished: break
 
                 self.screen.update()
                 sleep(0.01)
