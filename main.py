@@ -118,7 +118,40 @@ class card:
         del self
 
 
-class anarchy():
+class user():
+    def click_no(self, event):
+        #addition = self.card1.situation["false"]
+        self.card1.decided = True
+        self.card1.choice = False
+        '''
+        self.gun += addition['military']
+        self.dollar += addition['economy']
+        self.leaf += addition['nature']
+        self.person += addition['people']
+        '''
+
+    def click_yes(self, event):
+        #addition = self.card1.situation["true"]
+        self.card1.choice = self.card1.decided = True
+        '''
+        self.gun += addition['military']
+        self.dollar += addition['economy']
+        self.leaf += addition['nature']
+        self.person += addition['people']
+        '''
+
+    def enter_no(self, event):
+        cords = self.screen.coords(self.leftButton)
+        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.negative_word, fill = "white", font = ("Courier", 15))
+    
+    def enter_yes(self, event):
+        cords = self.screen.coords(self.rightButton)
+        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.positive_word, fill = "white", font = ("Courier", 15))
+    
+    def leave(self, event):
+        self.screen.delete(self.temp_text)
+
+class anarchy(user):
     def __init__(self):
         self.root = Tk()
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
@@ -137,6 +170,9 @@ class anarchy():
             military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
         )
 
+        self.negative = ["No", "No way!", "Not on my watch", "Not happening", "How about no"]
+        self.positive = ["Yes", "Of course", "Sure", "Ok", "I'll see to it", "Alright"]
+
         for i in range(25):
             self.gun.canvas_delete(), self.dollar.canvas_delete(), self.leaf.canvas_delete(), self.person.canvas_delete()
             self.gun += 2
@@ -146,27 +182,6 @@ class anarchy():
 
             self.screen.update()
             sleep(0.03)
-    
-    def user_click_no(self, event):
-        #addition = self.card1.situation["false"]
-        self.card1.decided = True
-        self.card1.choice = False
-        '''
-        self.gun += addition['military']
-        self.dollar += addition['economy']
-        self.leaf += addition['nature']
-        self.person += addition['people']
-        '''
-
-    def user_click_yes(self, event):
-        #addition = self.card1.situation["true"]
-        self.card1.choice = self.card1.decided = True
-        '''
-        self.gun += addition['military']
-        self.dollar += addition['economy']
-        self.leaf += addition['nature']
-        self.person += addition['people']
-        '''
 
     def draw_arrows(self):
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
@@ -234,21 +249,24 @@ class anarchy():
             kwargs['text'] = "Turtles died"
             endgame(args, kwargs)
 
-    def __call__(self):
+    def run(self):
         while True:
             self.card1 = card(self.screen)
             self.card1.draw()
             self.draw_arrows()
 
-            self.screen.tag_bind(self.leftButton, "<Button-1>", self.user_click_no)
-            self.root.bind("<Left>", self.user_click_no)
-            #self.screen.tag_bind(self.leftButton, "<enter>", self.enter_no)
-            #self.screen.tag_bind(self.leftButton, "<leave>", self.leave_no)
+            self.positive_word = choice(self.positive)
+            self.negative_word = choice(self.negative)
 
-            self.screen.tag_bind(self.rightButton, "<Button-1>", self.user_click_yes)
-            self.root.bind("<Right>", self.user_click_yes)
-            #self.screen.tag_bind(self.rightButton, "<enter>", self.enter_yes)
-            #self.screen.tag_bind(self.rightButton, "<leave>", self.enter_no)
+            self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
+            self.root.bind("<Left>", self.click_no)
+            self.screen.tag_bind(self.leftButton, "<Enter>", self.enter_no)
+            self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
+
+            self.screen.tag_bind(self.rightButton, "<Button-1>", self.click_yes)
+            self.root.bind("<Right>", self.click_yes)
+            self.screen.tag_bind(self.rightButton, "<Enter>", self.enter_yes)
+            self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
 
             numWeeks = self.screen.create_text(
                 1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
@@ -272,13 +290,14 @@ class anarchy():
             direction = "r" if self.card1.choice else "l"
             move_finished = icons_finished = False
             
-            while True:
+            #while True:
+            while move_finished and icons_finished:
                 if self.card1.move(direction):
                     move_finished = True
                 if not self.animate_icons(targets):
                     icons_finished = True
                 
-                if move_finished and icons_finished: break
+                #if move_finished and icons_finished: break
 
                 self.screen.update()
                 sleep(0.01)
@@ -292,4 +311,4 @@ class anarchy():
 
 if __name__ == "__main__":
     game = anarchy()
-    game()
+    game.run()
