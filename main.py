@@ -42,7 +42,7 @@ class card:
         x1+radius, y2, x1, y2, x1, y2-radius, x1, y2-radius, x1, y1+radius,
         x1, y1+radius, x1, y1]
 
-        return screen.create_polygon(points, **kwargs, smooth=True)
+        return screen.create_polygon(points, smooth=True, **kwargs)
 
     def move(self, direction):
         if direction.lower() in ["r", "right", "e", "east"]:
