@@ -33,7 +33,7 @@ class icon:
     def canvas_delete(self): #we don't want to use __del__ because we only want to screen.delete()
         self.screen.delete(self.cropped_image)
 
-#ALL 4 CLASSES BELOW INHERIT FROM ICON CLASS
+
 #military meter, 
 class military(icon):
     def __init__(self, screen):

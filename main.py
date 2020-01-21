@@ -7,7 +7,6 @@ from random import choice
 import json
 
 
-'''
 def copyFile(copyFrom, copyTo):
     source = open(copyFrom, 'r')
     read = source.readlines()
@@ -19,7 +18,6 @@ def copyFile(copyFrom, copyTo):
         out.write(i)
     
     out.close()
-'''
 
 
 class card:
@@ -161,7 +159,7 @@ class anarchy(user):
 
         self.week = 0
 
-        #copyFile('choices.json', 'choices-user.json')
+        copyFile('choices.json', 'choices-user.json')
 
         with open('choices.json', 'r') as data_file:
             self.choices = json.load(data_file)
