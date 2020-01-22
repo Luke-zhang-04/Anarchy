@@ -1,5 +1,3 @@
-from lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
-install()
 from PIL import Image, ImageTk #sudo pip install pillow into terminal if PythonPackageInstaller doesn't work
 
 def pack(image): #returns a photoimage

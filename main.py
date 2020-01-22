@@ -1,5 +1,10 @@
-from imageFunctions import *
-from icons import *
+from lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
+install()
+
+from PIL import Image
+
+from imageFunctions import pack, resize_image, crop_image
+from icons import military, money, nature, people
 
 from tkinter import Tk, Canvas
 from time import sleep
@@ -7,54 +12,53 @@ from random import choice
 import json
 
 
-def copyFile(copyFrom, copyTo):
-    source = open(copyFrom, 'r')
-    #read = source.readlines()
+def copyFile(copyFrom, copyTo): #copys JSON file
+    source = open(copyFrom, 'r') #open file
     read = json.load(source)
     source.close()
 
     out = open(copyTo, 'w')
 
-    '''
-    for i in read:
-        out.write(i)
-    '''
-
-    json.dump(read, out)
+    json.dump(read, out) #dump file
     
     out.close()
 
 
+#Cards that have the given situations and it's details
 class card:
     def __init__(self, screen):
         self.body = self.top_area = self.image_file = self.image_file = self.image = self.person = self.text = None
-        self.screen = screen
-        self.decided = False
-        self.choice = None
+        self.screen = screen #Canvas
+        self.decided = False #If user has decided
+        self.choice = None #If user decided yes or no
+        
+        #Gets random situation
         with open('choices-user.json') as fin:
-            data = json.load(fin)
+            data = json.load(fin) #Load data
+            #Get random person to speak to
             situation = choice(list(data['choices']))
-            self.whole = situation
+            self.person_key = situation
             situation = data['choices'][situation]
-            self.person = situation[0]
-            self.situation = choice(situation[1:])
+            self.person = situation[0] #Random person
+            #Get random situation from that person
+            self.situation = choice(situation[1:]) #Random situation
 
+    #Once a situation has been used, it needs to be deleted
     def delete_key(self):
         with open('choices-user.json', 'r') as data_file:
             data = json.load(data_file)
 
-        if len(self.whole) == 2:
-            del data["choices"][self.whole]
-        else:
-            print("\n***", self.whole, "\n***", self.situation)
-            data["choices"][self.whole].remove(self.situation)
+        data["choices"][self.person_key].remove(self.situation) #Remove the situation
+        if len(data["choices"][self.person_key]) == 1: #Remove the perosn entirely if they have no more situations left
+            del data["choices"][self.person_key]
 
-        with open('choices-user.json', 'w') as data_file:
-            data = json.dump(data, data_file)
+        with open('choices-user.json', 'w') as data_file: #Dump modified data
+            json.dump(data, data_file)
         data_file.close()
 
+    #Created rectangle w/ rounded corners
     @staticmethod
-    def round_rectangle(screen, x1, y1, x2, y2, radius=25, **kwargs): #For drawing a round rectangle
+    def round_rectangle(screen, x1, y1, x2, y2, radius=25, **kwargs):
 
         points = [x1+radius, y1, x1+radius, y1, x2-radius, y1, x2-radius,
         y1, x2, y1, x2, y1+radius, x2, y1+radius, x2, y2-radius, x2,
@@ -64,25 +68,28 @@ class card:
 
         return screen.create_polygon(points, smooth=True, **kwargs)
 
+    #Move the card
     def move(self, direction):
-        if direction.lower() in ["r", "right", "e", "east"]:
+        if direction.lower() in ["r", "right", "e", "east"]: #Move the card
             xSpeed = 25
             ySpeed = 0
         elif direction.lower() in ["l", "left", "w", "west"]:
             xSpeed = -25
             ySpeed = 0
         
-        for element in self.elements:
+        for element in self.elements: #Move every element with the card
             self.screen.move(element, xSpeed, ySpeed)
         
-        if self.screen.coords(self.body)[-2] > self.screen.winfo_width() or self.screen.coords(self.body)[8] < 0:
+        #Return True when the card if off the screen
+        if self.screen.coords(self.body)[-2] > self.screen.winfo_width() or self.screen.coords(self.body)[8] < 0: 
             return True
         else:
             return False
 
+    #Draw the card
     def draw(self):
-        screen = self.screen
-        width, height = screen.winfo_width(), screen.winfo_height()
+        screen = self.screen #Canvas
+        width, height = screen.winfo_width(), screen.winfo_height() #Width and height of the canvas
 
         #create card body
         self.body = self.round_rectangle(
@@ -118,7 +125,7 @@ class card:
         )
 
         #create text of person speaking
-        self.person_image = screen.create_text(
+        self.person_title = screen.create_text(
             dimensions[0]+50, dimensions[1]+275, anchor = "nw", text = self.person['title'], font=("Courier")
         )
 
@@ -128,59 +135,85 @@ class card:
             text = self.situation['description'], font=("Courier")
         )
 
-        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person_image, self.text, self.image_area]
+        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person_title, self.text, self.image_area]
 
     def __del__(self): #delete card
-        self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person_image, self.text, self.image_area)
+        self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person_title, self.text, self.image_area)
         del self
 
 
+#Class for user interaction
 class user:
+    #Pylint is bugging me so I included this
+    def __init__(self):
+        self.card1 = self.screen = self.leftButton = self.negative_word = self.rightButton = self.positive_word = None
+
+     #If user clicks no
     def click_no(self, event):
         self.card1.decided = True
         self.card1.choice = False
         self.screen.delete(self.temp_text)
+        self.card1.delete_key()
 
-    def click_yes(self, event):
+    #If user clicks yes
+    def click_yes(self, event): 
         self.card1.choice = self.card1.decided = True
         self.screen.delete(self.temp_text)
         self.card1.delete_key()
 
+    #If user uses arrow to signal no
+    def arrow_no(self, event): 
+        self.card1.decided = True
+        self.card1.choice = False
+        self.card1.delete_key()
+
+    #If user uses arrow to signal yes
+    def arrow_yes(self, event):
+        self.card1.choice = self.card1.decided = True
+        self.card1.delete_key()
+
+    #User hovers mouse over no button
     def enter_no(self, event):
+        #Show no message
         cords = self.screen.coords(self.leftButton)
         self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.negative_word, fill = "white", font = ("Courier", 15))
-        self.card1.delete_key()
-    
+
+    #User hovers mouse over yes button
     def enter_yes(self, event):
+        #Show yes message
         cords = self.screen.coords(self.rightButton)
         self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.positive_word, fill = "white", font = ("Courier", 15))
     
+    #User takes mouse off a button
     def leave(self, event):
         self.screen.delete(self.temp_text)
 
+#Anarchy game
 class anarchy(user):
     def __init__(self):
+        #Normal Tkinter stuff
         self.root = Tk()
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
+        #Fullscreen game, canvas size based on resolution
         self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9")
         self.screen.pack()
         self.screen.update()
 
-        self.week = 0
+        self.week = 0 #week counter
 
-        copyFile('choices.json', 'choices-user.json')
+        copyFile('choices.json', 'choices-user.json') #Copy file over
 
-        with open('choices.json', 'r') as data_file:
-            self.choices = json.load(data_file)
-
+        #Instantiate of 4 icons
         self.gun, self.dollar, self.leaf, self.person = (
             military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
         )
 
+        #A bunch of words for yes or no
         self.negative = ["No", "No way!", "Not on my watch", "Not happening", "How about no"]
         self.positive = ["Yes", "Of course", "Sure", "Ok", "I'll see to it", "Alright"]
 
-        for i in range(25):
+        for _ in range(25):
+            #Start user at 50% for each icon
             self.gun.canvas_delete(), self.dollar.canvas_delete(), self.leaf.canvas_delete(), self.person.canvas_delete()
             self.gun += 2
             self.dollar += 2
@@ -190,6 +223,7 @@ class anarchy(user):
             self.screen.update()
             sleep(0.03)
 
+    #Draw yes or no option arrows
     def draw_arrows(self):
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
         self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
@@ -200,8 +234,9 @@ class anarchy(user):
         self.rightButton = self.screen.create_image(card[1]+200, 360, image = self.rightPhotoImg)
         self.screen.update()
     
+    #Animate icons, takes in dict of values
     def animate_icons(self, comparison):
-        change = False
+        change = False #If a change is made
         if self.person.current > comparison['people']:
             change = True
             self.person -= 1
@@ -232,10 +267,12 @@ class anarchy(user):
         
         return change
 
+    #Check if values are too low, and if ser looses the game
     def check_values(self):
         kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44)}
         args = int(self.screen['width'])//2, int(self.screen['height'])//2
 
+        #Gives game over message
         def endgame(*args, **kwargs):
             self.screen.create_text(*args, **kwargs)
             self.screen.delete(self.leftButton, self.rightButton)
@@ -256,34 +293,37 @@ class anarchy(user):
             kwargs['text'] = "Turtles died"
             endgame(args, kwargs)
 
-    def run(self):
+    #To run the Game
+    def runGame(self):
         while True:
-            self.card1 = card(self.screen)
-            self.card1.draw()
-            self.draw_arrows()
+            self.card1 = card(self.screen) #Instantiate new card
+            self.card1.draw() #Draw the card
+            self.draw_arrows() #Draw yes or no arrows
 
-            self.positive_word = choice(self.positive)
-            self.negative_word = choice(self.negative)
+            self.positive_word = choice(self.positive) #Choose a yes word
+            self.negative_word = choice(self.negative) #Choose a no word
 
+            #Key bindings
             self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
-            self.root.bind("<Left>", self.click_no)
+            self.root.bind("<Left>", self.arrow_no)
             self.screen.tag_bind(self.leftButton, "<Enter>", self.enter_no)
             self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
 
             self.screen.tag_bind(self.rightButton, "<Button-1>", self.click_yes)
-            self.root.bind("<Right>", self.click_yes)
+            self.root.bind("<Right>", self.arrow_yes)
             self.screen.tag_bind(self.rightButton, "<Enter>", self.enter_yes)
             self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
 
-            numWeeks = self.screen.create_text(
+            numWeeks = self.screen.create_text( #Display number of weeks
                 1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
             )
 
             self.screen.update()
-            while not self.card1.decided:
+            while not self.card1.decided: #Wait for user to decide
                 self.screen.update()
                 sleep(0.01)
         
+            #Create a dictionary of desired values
             comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
             targets = {}
             targets["people"] = comparison["people"] + self.person.current
@@ -291,30 +331,31 @@ class anarchy(user):
             targets["economy"] = comparison["economy"] + self.dollar.current
             targets["nature"] = comparison["nature"] + self.leaf.current
             for i in targets:
-                if targets[i] > 100: targets[i] = 100
-                elif targets[i] < 0: targets[i] = 0
+                if targets[i] > 100: targets[i] = 100 #If value exceeds 100%
+                elif targets[i] < 0: targets[i] = 0 #If value is below 0%
 
-            direction = "r" if self.card1.choice else "l"
+            direction = "r" if self.card1.choice else "l" #Move card in direction of arrow click
             move_finished = icons_finished = False
             
+            #Animate the icons filling up and card sliding over
             while True:
-                if self.card1.move(direction):
+                if self.card1.move(direction): #Move the card
                     move_finished = True
-                if not self.animate_icons(targets):
+                if not self.animate_icons(targets): #Increment the icons
                     icons_finished = True
                 
-                if move_finished and icons_finished: break
+                if move_finished and icons_finished: break #Break when both are finished
 
                 self.screen.update()
                 sleep(0.01)
 
-            self.check_values()
+            self.check_values() #Check for w/l
 
-            del self.card1
-            self.screen.delete(self.leftButton, self.rightButton, numWeeks)
-            self.week += 1
+            del self.card1 #Delete card
+            self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
+            self.week += 1 #incrment week
 
 
 if __name__ == "__main__":
     game = anarchy()
-    game.run()
+    game.runGame()
