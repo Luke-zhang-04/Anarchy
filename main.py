@@ -24,6 +24,10 @@ def copyFile(copyFrom, copyTo): #copys JSON file
     out.close()
 
 
+def create_circle(screen, x, y, radius, **kwargs):
+    return screen.create_oval(x-radius, y+radius, x+radius, y-radius, **kwargs)
+
+
 #Cards that have the given situations and it's details
 class card:
     def __init__(self, screen):
@@ -146,9 +150,21 @@ class card:
 class user:
     #Pylint is bugging me so I included this
     def __init__(self):
-        self.card1 = self.screen = self.leftButton = self.negative_word = self.rightButton = self.positive_word = None
+        self.card1 = self.screen = self.leftButton = self.negative_word = self.rightButton = self.positive_word = self.root = None
+    
+    def bindKeys(self):
+        #Key bindings
+        self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
+        self.root.bind("<Left>", self.arrow_no)
+        self.screen.tag_bind(self.leftButton, "<Enter>", self.enter_no)
+        self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
 
-     #If user clicks no
+        self.screen.tag_bind(self.rightButton, "<Button-1>", self.click_yes)
+        self.root.bind("<Right>", self.arrow_yes)
+        self.screen.tag_bind(self.rightButton, "<Enter>", self.enter_yes)
+        self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
+    
+    #If user clicks no
     def click_no(self, event):
         self.card1.decided = True
         self.card1.choice = False
@@ -223,6 +239,10 @@ class anarchy(user):
             self.screen.update()
             sleep(0.03)
 
+    def indicators(self, values):
+        if values["people"] != 0:
+            self.people_indicator = self.screen.create_oval()
+
     #Draw yes or no option arrows
     def draw_arrows(self):
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
@@ -267,7 +287,7 @@ class anarchy(user):
         
         return change
 
-    #Check if values are too low, and if ser looses the game
+    #Check if values are too low, and if user looses the game
     def check_values(self):
         kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44)}
         args = int(self.screen['width'])//2, int(self.screen['height'])//2
@@ -293,6 +313,21 @@ class anarchy(user):
             kwargs['text'] = "Turtles died"
             endgame(args, kwargs)
 
+    def getTargets(self):
+        #Create a dictionary of desired values
+        comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
+        targets = {}
+        targets["people"] = comparison["people"] + self.person.current
+        targets["military"] = comparison["military"] + self.gun.current
+        targets["economy"] = comparison["economy"] + self.dollar.current
+        targets["nature"] = comparison["nature"] + self.leaf.current
+        for i in targets:
+            if targets[i] > 100: targets[i] = 100 #If value exceeds 100%
+            elif targets[i] < 0: targets[i] = 0 #If value is below 0%
+
+        direction = "r" if self.card1.choice else "l" #Move card in direction of arrow click
+        return targets, direction
+
     #To run the Game
     def runGame(self):
         while True:
@@ -303,16 +338,7 @@ class anarchy(user):
             self.positive_word = choice(self.positive) #Choose a yes word
             self.negative_word = choice(self.negative) #Choose a no word
 
-            #Key bindings
-            self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
-            self.root.bind("<Left>", self.arrow_no)
-            self.screen.tag_bind(self.leftButton, "<Enter>", self.enter_no)
-            self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
-
-            self.screen.tag_bind(self.rightButton, "<Button-1>", self.click_yes)
-            self.root.bind("<Right>", self.arrow_yes)
-            self.screen.tag_bind(self.rightButton, "<Enter>", self.enter_yes)
-            self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
+            self.bindKeys()
 
             numWeeks = self.screen.create_text( #Display number of weeks
                 1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
@@ -323,18 +349,7 @@ class anarchy(user):
                 self.screen.update()
                 sleep(0.01)
         
-            #Create a dictionary of desired values
-            comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
-            targets = {}
-            targets["people"] = comparison["people"] + self.person.current
-            targets["military"] = comparison["military"] + self.gun.current
-            targets["economy"] = comparison["economy"] + self.dollar.current
-            targets["nature"] = comparison["nature"] + self.leaf.current
-            for i in targets:
-                if targets[i] > 100: targets[i] = 100 #If value exceeds 100%
-                elif targets[i] < 0: targets[i] = 0 #If value is below 0%
-
-            direction = "r" if self.card1.choice else "l" #Move card in direction of arrow click
+            targets, direction = self.getTargets()
             move_finished = icons_finished = False
             
             #Animate the icons filling up and card sliding over
@@ -353,7 +368,7 @@ class anarchy(user):
 
             del self.card1 #Delete card
             self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
-            self.week += 1 #incrment week
+            self.week += 1 #increment week
 
 
 if __name__ == "__main__":

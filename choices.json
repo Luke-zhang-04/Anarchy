@@ -14,6 +14,11 @@
                 "description": "PETA is looking to ban commercial farms.",
                 "true": {"people": -10, "military": 0, "economy": -10, "nature": 15},
                 "false": {"people": 0, "military": 0, "economy": 15, "nature": -10}
+            },
+            {
+                "description": "There has been high rates of crime in the south and the victims seek compensation from the state",
+                "true": {"people": 10, "military": 0, "economy": -10, "nature": 0},
+                "false": {"people": -10, "military": 0, "economy": 10, "nature": 0}
             }
         ],
         "doctor": [
@@ -60,8 +65,8 @@
             },
             {
                 "description": "The factories are making us sick! Take them down!",
-                "true": {"people": 20, "military": 0, "economy": -20, "nature": 0},
-                "false": {"people": -10, "military": 0, "economy": 15, "nature": 0}
+                "true": {"people": 15, "military": 0, "economy": -20, "nature": 15},
+                "false": {"people": -15, "military": 0, "economy": 30, "nature": -15}
             }
         ],
         "CIA": [
