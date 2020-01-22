@@ -147,10 +147,6 @@ class card:
 
 #Class for user interaction
 class user:
-    #Pylint is bugging me so I included this
-    def __init__(self):
-        self.card1 = self.screen = self.leftButton = self.negative_word = self.rightButton = self.positive_word = self.root = None
-    
     def bindKeys(self):
         #Key bindings
         self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
@@ -212,6 +208,10 @@ class anarchy(user):
     def __init__(self):
         #Normal Tkinter stuff
         self.root = Tk()
+        self.root.attributes('-fullscreen', True)  
+        self.fullScreenState = False
+        self.root.bind("<f>", self.fullScreenToggle)
+        self.root.bind("<Escape>", self.fullScreenOff)
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         #Fullscreen game, canvas size based on resolution
         self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9")
@@ -242,6 +242,15 @@ class anarchy(user):
             self.screen.update()
             sleep(0.03)
 
+    def fullScreenToggle(self, event):
+        self.fullScreenState = not self.fullScreenState
+        self.root.attributes("-fullscreen", self.fullScreenState)
+
+    def fullScreenOff(self, event):
+        self.fullScreenState = False
+        self.root.attributes("-fullscreen", self.fullScreenState)
+
+    #Circles underneath effected icons
     def indicators(self, values):
         self.indicatorArray = []
 

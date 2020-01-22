@@ -24,6 +24,11 @@
                 "description": "We've found a new oil feild. Can we start fracking?",
                 "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
                 "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
+            },
+            {
+                "description": "",
+                "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
+                "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
             }
         ],
         "doctor": [
