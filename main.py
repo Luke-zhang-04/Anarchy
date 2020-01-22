@@ -58,7 +58,6 @@ class card:
 
         with open('choices-user.json', 'w') as data_file: #Dump modified data
             json.dump(data, data_file)
-        data_file.close()
 
     #Created rectangle w/ rounded corners
     @staticmethod
@@ -193,16 +192,20 @@ class user:
         #Show no message
         cords = self.screen.coords(self.leftButton)
         self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.negative_word, fill = "white", font = ("Courier", 15))
+        self.indicators(self.card1.situation['false'])
 
     #User hovers mouse over yes button
     def enter_yes(self, event):
         #Show yes message
         cords = self.screen.coords(self.rightButton)
         self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.positive_word, fill = "white", font = ("Courier", 15))
+        self.indicators(self.card1.situation['true'])
     
     #User takes mouse off a button
     def leave(self, event):
         self.screen.delete(self.temp_text)
+        for i in self.indicatorArray:
+            self.screen.delete(i)
 
 #Anarchy game
 class anarchy(user):
@@ -240,8 +243,16 @@ class anarchy(user):
             sleep(0.03)
 
     def indicators(self, values):
+        self.indicatorArray = []
+
+        if values["military"] != 0:
+            self.indicatorArray.append(create_circle(self.screen, (2*self.gun.place[0]+self.gun.resize[0])//2, self.gun.place[1]+25, 5, fill = "white", outline = "white"))
         if values["people"] != 0:
-            self.people_indicator = self.screen.create_oval()
+            self.indicatorArray.append(create_circle(self.screen, (2*self.person.place[0]+self.person.resize[0])//2, self.person.place[1]+25, 5, fill = "white", outline = "white"))
+        if values["nature"] != 0:
+            self.indicatorArray.append(create_circle(self.screen, (2*self.leaf.place[0]+self.leaf.resize[0])//2, self.leaf.place[1]+25, 5, fill = "white", outline = "white"))
+        if values["economy"] != 0:
+            self.indicatorArray.append(create_circle(self.screen, (2*self.dollar.place[0]+self.dollar.resize[0])//2, self.dollar.place[1]+25, 5, fill = "white", outline = "white"))
 
     #Draw yes or no option arrows
     def draw_arrows(self):
@@ -349,14 +360,14 @@ class anarchy(user):
                 self.screen.update()
                 sleep(0.01)
         
-            targets, direction = self.getTargets()
+            self.targets, direction = self.getTargets()
             move_finished = icons_finished = False
             
             #Animate the icons filling up and card sliding over
             while True:
                 if self.card1.move(direction): #Move the card
                     move_finished = True
-                if not self.animate_icons(targets): #Increment the icons
+                if not self.animate_icons(self.targets): #Increment the icons
                     icons_finished = True
                 
                 if move_finished and icons_finished: break #Break when both are finished

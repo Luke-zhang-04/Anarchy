@@ -19,6 +19,11 @@
                 "description": "There has been high rates of crime in the south and the victims seek compensation from the state",
                 "true": {"people": 10, "military": 0, "economy": -10, "nature": 0},
                 "false": {"people": -10, "military": 0, "economy": 10, "nature": 0}
+            },
+            {
+                "description": "We've found a new oil feild. Can we start fracking?",
+                "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
+                "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
             }
         ],
         "doctor": [
