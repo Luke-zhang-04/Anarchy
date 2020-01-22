@@ -26,7 +26,17 @@
                 "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
             },
             {
-                "description": "",
+                "description": "The country needs more energy. Can we reopen nuclear power plants?",
+                "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
+                "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
+            },
+            {
+                "description": "The people are looking for more social programs. Can we make more?",
+                "true": {"people": 15, "military": 0, "economy": -10, "nature": 0},
+                "false": {"people": -10, "military": 0, "economy": 15, "nature": 25}
+            },
+            {
+                "description": "Lets build roads",
                 "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
                 "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
             }
