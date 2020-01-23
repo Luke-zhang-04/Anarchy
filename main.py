@@ -16,12 +16,13 @@ def soundInstall():
     #try to import pygame, resort to winsound, if needed, otherwise no engine
     global sound_engine
     sound_engine = None
+
     try: #first try pygame
         global pygame
         import pygame
         sound_engine = "pygame"
         print("USING PYGAME FOR SOUND")
-    except ModuleNotFoundError: #Now try winsound
+    except ImportError: #Now try winsound
         print("***ERROR***")
         print("Pygame was not imported successfully.\nFixes:")
         print("1. Pygame was not installed to the system correctly. The problem then lies in the package installer. Possible fix: Try restating the program.")
@@ -31,10 +32,11 @@ def soundInstall():
         Windows = True if name == "nt" else False
         if Windows:
             try:
+                global PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
                 from winsound import PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
                 sound_engine = "winsound"
                 print("USING WINSOUND FOR SOUND")
-            except (ModuleNotFoundError, ImportError):
+            except ImportError:
                 print("***ERROR***")
                 print("Winsound could not be imported. Reason: unknown")
                 print("Neither winsound nor pygame could be imported properly. No sound can be played.")
@@ -272,12 +274,12 @@ class menu:
     def startMusic(self): #Stat music
         if sound_engine == "pygame": #If using pygame
             pygame.mixer.init()
-            pygame.mixer.music.load("other/adrenaline.mp3")
+            pygame.mixer.music.load("other/adrenaline.wav")
             pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
 
         elif sound_engine == "winsound": #If using winsound
-            PlaySound('other/adrenaline.mp3', SND_LOOP + SND_ASYNC)
+            PlaySound('other/adrenaline.wav', SND_LOOP + SND_ASYNC)
         
         else: #Tell user no music is being played
             self.screen.create_text(
