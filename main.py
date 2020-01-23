@@ -179,26 +179,68 @@ class card:
 class menu:
     def menuScreen(self, screen):
         self.screen = screen
-        self.background = resize_image(Image.open("pictures/background.png"), screen.winfo_width(), screen.winfo_width())
+        width, height = screen.winfo_width(), screen.winfo_height()
+        
+        self.background = resize_image(Image.open("pictures/background.png"), width, width)
         self.background = pack(self.background)
         self.background_image = screen.create_image(
-            screen.winfo_width()//2, screen.winfo_height()//2, anchor = "center", image = self.background
+            width//2, height//2, anchor = "center", image = self.background
         )
         self.startMusic()
 
         for i in range(1, 50):
-            title = screen.create_text(screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
+            title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
             screen.update()
             sleep(0.1)
             screen.delete(title)
-        self.title = screen.create_text(screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
         
-        self.quitButton = screen.create_rectangle(
-            25, screen.winfo_height()-25, 175, screen.winfo_height()-75, fill = "brown4", outline = "brown4"
-        )
+        menuButtons = self.menuButtons = {}
+        self.title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
+        self.buttonNames = ["quit", "help", "load", "easy", "hard"]
+
+        for i in range(2):
+            self.menuButtons[self.buttonNames[i] + "Button"] = screen.create_rectangle(
+                25, height-25-(i*175), 275, height-175-(i*175), fill = "grey50", outline = "gray50"
+            ) 
+            self.menuButtons[self.buttonNames[i] + "Text"] = screen.create_text(
+                150, (2*height-200-2*(i*175))//2, anchor = "center", text = self.buttonNames[i].title(), font = ("Courier", 50), fill = "black"
+            )
+        
+        for i in range(3):
+            self.menuButtons[self.buttonNames[i+2] + "Button"] = screen.create_rectangle(
+                width-275, height-25-(i*175), width-25, height-175-(i*175), fill = "grey50", outline = "gray50"
+            ) 
+            self.menuButtons[self.buttonNames[i+2] + "Text"] = screen.create_text(
+                width-150, (2*height-200-2*(i*175))//2, anchor = "center", text = self.buttonNames[i+2].title(), font = ("Courier", 50), fill = "black"
+            )
+
+        screen.tag_bind(menuButtons["quitButton"], "<Button-1>", self.masterQuit)
+        screen.tag_bind(menuButtons["quitText"], "<Button-1>", self.masterQuit)
+        screen.tag_bind(menuButtons["helpButton"], "<Button-1>", self.displayHelp)
+        screen.tag_bind(menuButtons["helpText"], "<Button-1>", self.displayHelp)
+        screen.tag_bind(menuButtons["loadButton"], "<Button-1>", self.loadData)
+        screen.tag_bind(menuButtons["loadText"], "<Button-1>", self.loadData)
+        screen.tag_bind(menuButtons["hardButton"], "<Button-1>", self.run)
+        screen.tag_bind(menuButtons["hardText"], "<Button-1>", self.run)
+        screen.tag_bind(menuButtons["easyButton"], "<Button-1>", self.run)
+        screen.tag_bind(menuButtons["easyText"], "<Button-1>", self.run)
 
         screen.mainloop()
     
+    def displayHelp(self, event):
+        print()
+    
+    def loadData(self, event):
+        print("WIP")
+
+    def run(self, event):
+        self.screen.delete("all")
+        self.background_image = self.screen.create_image(
+            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
+        )
+        self.runGame()
+
+
     def startMusic(self):
         if sound_engine == "pygame":
             pygame.mixer.init()
@@ -320,8 +362,10 @@ class anarchy(user, menu):
         self.root.attributes("-fullscreen", self.fullScreenState)
 
     def masterQuit(self, event):
+        try: self.root.destroy()
+        except: pass
         exit()
-
+        
     #Circles underneath effected icons
     def indicators(self, values):
         self.indicatorArray = []
