@@ -179,30 +179,35 @@ class card:
 class menu:
     def menuScreen(self, screen):
         self.screen = screen
-        self.background = resize_image(Image.open("pictures/background.png"), self.screen.winfo_width(), self.screen.winfo_width())
+        self.background = resize_image(Image.open("pictures/background.png"), screen.winfo_width(), screen.winfo_width())
         self.background = pack(self.background)
         self.background_image = screen.create_image(
-            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
+            screen.winfo_width()//2, screen.winfo_height()//2, anchor = "center", image = self.background
         )
         self.startMusic()
 
         for i in range(1, 50):
-            title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
-            self.screen.update()
+            title = screen.create_text(screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
+            screen.update()
             sleep(0.1)
-            self.screen.delete(title)
-        self.title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
+            screen.delete(title)
+        self.title = screen.create_text(screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
+        
+        self.quitButton = screen.create_rectangle(
+            25, screen.winfo_height()-25, 175, screen.winfo_height()-75, fill = "brown4", outline = "brown4"
+        )
+
         screen.mainloop()
     
     def startMusic(self):
         if sound_engine == "pygame":
             pygame.mixer.init()
-            pygame.mixer.music.load("other/adrenaline.wav")
+            pygame.mixer.music.load("other/adrenaline.mp3")
             pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
 
         elif sound_engine == "winsound":
-            PlaySound('other/adrenaline.wav', SND_LOOP + SND_ASYNC)
+            PlaySound('other/adrenaline.mp3', SND_LOOP + SND_ASYNC)
         
         else:
             self.screen.create_text(

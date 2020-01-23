@@ -4,5 +4,5 @@ git-%:
 
 git add-%:
 	git add .
-	git commit -a -m"$(@:git-%=%)"
+	git commit -a -m"$(@:add-%=%)"
 	git push -u origin master
