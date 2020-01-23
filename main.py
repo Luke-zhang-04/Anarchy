@@ -145,6 +145,22 @@ class card:
         del self
 
 
+class menu:
+    def __init__(self, screen):
+        self.screen = screen
+        self.background = resize_image(Image.open("pictures/background.png"), self.screen.winfo_width(), self.screen.winfo_width())
+        self.background = pack(self.background)
+        self.background_image = screen.create_image(
+            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
+        )
+        for i in range(1, 50):
+            title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
+            self.screen.update()
+            sleep(0.1)
+            self.screen.delete(title)
+        self.title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
+        screen.mainloop()
+
 #Class for user interaction
 class user:
     def bindKeys(self):
@@ -203,21 +219,24 @@ class user:
         for i in self.indicatorArray:
             self.screen.delete(i)
 
+
 #Anarchy game
-class anarchy(user):
+class anarchy(user, menu):
     def __init__(self):
         #Normal Tkinter stuff
         self.root = Tk()
         self.root.attributes('-fullscreen', True)  
         self.fullScreenState = False
         self.root.bind("<f>", self.fullScreenToggle)
-        self.root.bind("<Escape>", self.fullScreenOff)
+        self.root.bind("<Escape>", self.masterQuit)
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         #Fullscreen game, canvas size based on resolution
         self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9")
         self.screen.pack()
         self.screen.update()
+        self.menu_screen = menu(self.screen)
 
+    def set_up(self):
         self.week = 0 #week counter
 
         copyFile('choices.json', 'choices-user.json') #Copy file over
@@ -246,9 +265,8 @@ class anarchy(user):
         self.fullScreenState = not self.fullScreenState
         self.root.attributes("-fullscreen", self.fullScreenState)
 
-    def fullScreenOff(self, event):
-        self.fullScreenState = False
-        self.root.attributes("-fullscreen", self.fullScreenState)
+    def masterQuit(self, event):
+        exit()
 
     #Circles underneath effected icons
     def indicators(self, values):
@@ -333,7 +351,7 @@ class anarchy(user):
             kwargs['text'] = "Turtles died"
             endgame(args, kwargs)
 
-    def getTargets(self):
+    def get_targets(self):
         #Create a dictionary of desired values
         comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
         targets = {}
@@ -350,6 +368,7 @@ class anarchy(user):
 
     #To run the Game
     def runGame(self):
+        self.set_up()
         while True:
             self.card1 = card(self.screen) #Instantiate new card
             self.card1.draw() #Draw the card
@@ -369,7 +388,7 @@ class anarchy(user):
                 self.screen.update()
                 sleep(0.01)
         
-            self.targets, direction = self.getTargets()
+            self.targets, direction = self.get_targets()
             move_finished = icons_finished = False
             
             #Animate the icons filling up and card sliding over
@@ -393,4 +412,3 @@ class anarchy(user):
 
 if __name__ == "__main__":
     game = anarchy()
-    game.runGame()

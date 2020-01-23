@@ -27,8 +27,8 @@
             },
             {
                 "description": "The country needs more energy. Can we reopen nuclear power plants?",
-                "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
-                "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
+                "true": {"people": 0, "military": 0, "economy": 15, "nature": -15},
+                "false": {"people": 0, "military": 0, "economy": -15, "nature": 15}
             },
             {
                 "description": "The people are looking for more social programs. Can we make more?",
@@ -36,9 +36,9 @@
                 "false": {"people": -10, "military": 0, "economy": 15, "nature": 25}
             },
             {
-                "description": "Lets build roads",
-                "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
-                "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
+                "description": "Lets build roads to help infrastructure",
+                "true": {"people": 0, "military": 0, "economy": 15, "nature": -20},
+                "false": {"people": 0, "military": 0, "economy": -15, "nature": 15}
             }
         ],
         "doctor": [
