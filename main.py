@@ -9,6 +9,7 @@ from icons import military, money, nature, people
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
+import pygame #Winsound isn't supported on mac :(
 import json
 
 
@@ -27,6 +28,8 @@ def copyFile(copyFrom, copyTo): #copys JSON file
 def create_circle(screen, x, y, radius, **kwargs):
     return screen.create_oval(x-radius, y+radius, x+radius, y-radius, **kwargs)
 
+def play():
+    return PlaySound("click_one.wav", SND_FILENAME)
 
 #Cards that have the given situations and it's details
 class card:
