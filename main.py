@@ -179,17 +179,32 @@ class card:
 
 
 class menu:
-    def menuScreen(self, screen):
+    def menuStart(self, screen):
         self.screen = screen
-        screen.delete("all") #Clear screen
         width, height = screen.winfo_width(), screen.winfo_height()
-        
+        screen.delete("all") #Clear screen
         self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
         self.background_image = screen.create_image(
             width//2, height//2, anchor = "center", image = self.background
         )
         self.startMusic() #Start music
+        self.menuScreen(self.screen)
+
+    def menuScreen(self, screen):
+        self.screen = screen
+        
+        #screen.delete("all") #Clear screen
+        width, height = screen.winfo_width(), screen.winfo_height()
+        
+        '''
+        self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
+        self.background = pack(self.background)
+        self.background_image = screen.create_image(
+            width//2, height//2, anchor = "center", image = self.background
+        )
+        self.startMusic() #Start music
+        '''
 
         for i in range(1, 50): #Fade in title
             title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
@@ -232,39 +247,52 @@ class menu:
         screen.mainloop()
     
     def displayHelp(self, event): #Displays help
-        self.screen.delete("all") #Clear canvas
+        self.screen.delete(self.title) #Clear canvas
+        for i in self.menuButtons:
+            self.screen.delete(self.menuButtons[i])
+        '''
         self.background_image = self.screen.create_image( #Backgound image
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
+        '''
         with open("instructions.txt", "r") as instruction_file: #Display instructions
-            self.screen.create_text(10, 10, anchor = "nw", width = self.screen.winfo_width()-20, fill = "white", font = ("Coruier", 30), text = instruction_file.readline())
+            self.instruction_text = self.screen.create_text(
+                10, 10, anchor = "nw", width = self.screen.winfo_width()-20, fill = "white", font = ("Courier", 30), text = instruction_file.readline()
+            )
 
-        backButton = self.screen.create_rectangle( #Button to return
+        self.backButton = self.screen.create_rectangle( #Button to return
             10, self.screen.winfo_height()-10, 260, self.screen.winfo_height()-110, fill = "grey50", outline = "grey50"
         )
-        backText = self.screen.create_text(
+        self.backText = self.screen.create_text(
             135, self.screen.winfo_height()-60, anchor = "center", text = "Back", font = ("Courier", 50), fill = "black"
         )
-        self.screen.tag_bind(backButton, "<Button-1>", self.toMenu)
-        self.screen.tag_bind(backText, "<Button-1>", self.toMenu)
+        self.screen.tag_bind(self.backButton, "<Button-1>", self.toMenu)
+        self.screen.tag_bind(self.backText, "<Button-1>", self.toMenu)
         self.screen.update()
         self.screen.mainloop()
 
     def toMenu(self, event): #Return to menu
+        self.screen.delete(self.instruction_text, self.backButton, self.backText)
         self.menuScreen(self.screen)
 
     def loadData(self, event): #Work in progress, load previously saved data
         print("WIP")
 
     def runHard(self, event): #Run gamemode hard
-        self.screen.delete("all")
+        #self.screen.delete("all")
+        self.screen.delete(self.title) #Clear canvas
+        for i in self.menuButtons:
+            self.screen.delete(self.menuButtons[i])
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
         self.runGame("h")
     
     def runEasy(self, event): #Run gamemose easy
-        self.screen.delete("all")
+        #self.screen.delete("all")
+        self.screen.delete(self.title) #Clear canvas
+        for i in self.menuButtons:
+            self.screen.delete(self.menuButtons[i])
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
@@ -362,7 +390,7 @@ class anarchy(user, menu):
         self.screen.pack()
         self.screen.update()
         self.qPressed = False
-        self.menu_screen = self.menuScreen(self.screen)
+        self.menuStart(self.screen)
 
     def qPress(self, event):
         self.qPressed = True
@@ -527,8 +555,10 @@ class anarchy(user, menu):
 
             self.screen.update()
             while not self.card1.decided: #Wait for user to decide
+                if self.qPressed: break
                 self.screen.update()
                 sleep(0.01)
+            if self.qPressed: break
         
             self.targets, direction = self.get_targets()
             move_finished = icons_finished = False
@@ -551,7 +581,23 @@ class anarchy(user, menu):
             self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
             self.week += 1 #increment week
 
-        if self.qPressed: self.menuScreen(self.screen)
+        if self.qPressed:
+            self.qPressed = False
+            del self.gun
+            del self.leaf
+            del self.person
+            del self.dollar
+
+            try: del self.card1 #Delete card
+            except AttributeError: pass
+            
+            self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
+
+            try: self.leave("")
+            except AttributeError: pass
+            
+            self.menuScreen(self.screen)
+        
 
 
 if __name__ == "__main__":

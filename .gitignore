@@ -1,5 +1,5 @@
 /__pycache__
 /lib/__pycache__
-.vscode
+*.vscode
 *.pyc
 *.swp

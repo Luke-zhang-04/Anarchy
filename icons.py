@@ -39,6 +39,10 @@ class icon:
 
     def canvas_delete(self): #we don't want to use __del__ because we only want to screen.delete()
         self.screen.delete(self.cropped_image)
+    
+    def __del__(self):
+        self.screen.delete(self.cropped_image, self.image)
+        del self
 
 
 #military meter, 
