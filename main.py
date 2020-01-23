@@ -20,6 +20,7 @@ def soundInstall():
         global pygame
         import pygame
         sound_engine = "pygame"
+        print("USING PYGAME")
     except ModuleNotFoundError:
         print("***ERROR***")
         print("Pygame was not imported successfully.\nFixes:")
@@ -32,6 +33,7 @@ def soundInstall():
             try:
                 from winsound import PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
                 sound_engine = "winsound"
+                print("USING WINSOUND")
             except (ModuleNotFoundError, ImportError):
                 print("***ERROR***")
                 print("Winsound could not be imported. Reason: unknown")
@@ -196,7 +198,16 @@ class menu:
         if sound_engine == "pygame":
             pygame.mixer.init()
             pygame.mixer.music.load("other/adrenaline.wav")
+            pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
+
+        elif sound_engine == "winsound":
+            PlaySound('other/adrenaline.wav', SND_LOOP + SND_ASYNC)
+        
+        else:
+            self.screen.create_text(
+                self.screen.winfo_width()//2, self.screen.winfo_height()-10, anchor = "s", text = "ERROR: Sound can't play. Check console for more details.", fill = "red", font = ("Courier", 10)
+            )
 
 #Class for user interaction
 class user:
