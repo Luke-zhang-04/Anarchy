@@ -9,7 +9,7 @@ from icons import military, money, nature, people
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
-import pygame #Winsound isn't supported on mac :(
+#import pygame #Winsound isn't supported on mac :(
 import json
 
 
@@ -234,7 +234,7 @@ class anarchy(user, menu):
         self.root.bind("<Escape>", self.masterQuit)
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         #Fullscreen game, canvas size based on resolution
-        self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9")
+        self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9", highlightthickness = 0)
         self.screen.pack()
         self.screen.update()
         self.menu_screen = menu(self.screen)
