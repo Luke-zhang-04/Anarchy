@@ -396,7 +396,7 @@ class anarchy(user, menu):
         self.qPressed = True
 
     def set_up(self):
-        self.week = 0 #week counter
+        self.month = 0 #week counter
 
         copyFile('choices.json', 'choices-user.json') #Copy file over
 
@@ -539,7 +539,7 @@ class anarchy(user, menu):
     def runGame(self, difficulty):
         self.set_up()
         self.difficulty = difficulty
-        while self.week <= 52 and not self.qPressed: #52 weeks in a year
+        while self.month <= 52 and not self.qPressed: #52 weeks in a year
             self.card1 = card(self.screen) #Instantiate new card
             self.card1.draw() #Draw the card
             self.draw_arrows() #Draw yes or no arrows
@@ -549,8 +549,8 @@ class anarchy(user, menu):
 
             self.bindKeys()
 
-            numWeeks = self.screen.create_text( #Display number of weeks
-                1200, 10, anchor = "ne", text = "Week: " + str(self.week), fill = 'white', font=("Courier", 44)
+            numMonths = self.screen.create_text( #Display number of weeks
+                1200, 10, anchor = "ne", text = "Month: " + str(self.month), fill = 'white', font=("Courier", 44)
             )
 
             self.screen.update()
@@ -578,8 +578,8 @@ class anarchy(user, menu):
             self.check_values() #Check for w/l
 
             del self.card1 #Delete card
-            self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
-            self.week += 1 #increment week
+            self.screen.delete(self.leftButton, self.rightButton, numMonths) #Delete other things
+            self.month += 1 #increment month
 
         if self.qPressed:
             self.qPressed = False
@@ -591,11 +591,11 @@ class anarchy(user, menu):
             try: del self.card1 #Delete card
             except AttributeError: pass
             
-            self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
+            self.screen.delete(self.leftButton, self.rightButton, numMonths) #Delete other things
 
             try: self.leave("")
             except AttributeError: pass
-            
+
             self.menuScreen(self.screen)
         
 
