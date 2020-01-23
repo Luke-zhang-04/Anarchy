@@ -220,10 +220,10 @@ class menu:
         screen.tag_bind(menuButtons["helpText"], "<Button-1>", self.displayHelp)
         screen.tag_bind(menuButtons["loadButton"], "<Button-1>", self.loadData)
         screen.tag_bind(menuButtons["loadText"], "<Button-1>", self.loadData)
-        screen.tag_bind(menuButtons["hardButton"], "<Button-1>", self.run)
-        screen.tag_bind(menuButtons["hardText"], "<Button-1>", self.run)
-        screen.tag_bind(menuButtons["easyButton"], "<Button-1>", self.run)
-        screen.tag_bind(menuButtons["easyText"], "<Button-1>", self.run)
+        screen.tag_bind(menuButtons["hardButton"], "<Button-1>", self.runHard)
+        screen.tag_bind(menuButtons["hardText"], "<Button-1>", self.runHard)
+        screen.tag_bind(menuButtons["easyButton"], "<Button-1>", self.runEasy)
+        screen.tag_bind(menuButtons["easyText"], "<Button-1>", self.runEasy)
 
         screen.mainloop()
     
@@ -233,12 +233,19 @@ class menu:
     def loadData(self, event):
         print("WIP")
 
-    def run(self, event):
+    def runHard(self, event):
         self.screen.delete("all")
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
-        self.runGame()
+        self.runGame("h")
+    
+    def runEasy(self, event):
+        self.screen.delete("all")
+        self.background_image = self.screen.create_image(
+            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
+        )
+        self.runGame("e")
 
 
     def startMusic(self):
@@ -452,6 +459,10 @@ class anarchy(user, menu):
     def get_targets(self):
         #Create a dictionary of desired values
         comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
+        if self.difficulty == "h":
+            for i in comparison:
+                if comparison[i] < 0:
+                    comparison[i] -= 3
         targets = {}
         targets["people"] = comparison["people"] + self.person.current
         targets["military"] = comparison["military"] + self.gun.current
@@ -465,9 +476,10 @@ class anarchy(user, menu):
         return targets, direction
 
     #To run the Game
-    def runGame(self):
+    def runGame(self, difficulty):
         self.set_up()
-        while True:
+        self.difficulty = difficulty
+        for _ in range(53): #52 weeks in a year
             self.card1 = card(self.screen) #Instantiate new card
             self.card1.draw() #Draw the card
             self.draw_arrows() #Draw yes or no arrows
