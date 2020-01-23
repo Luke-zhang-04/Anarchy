@@ -20,7 +20,8 @@ def install():
         print("Nothing to do. Exiting...")
         return
 ###################################################################################################
-    query = input("Show full output log? [y/n] ")
+    #query = input("Show full output log? [y/n] ")
+    query = "y"
     doFullLog = True if query.lower() in ["y", 'yes'] else False
 ###################################################################################################
     if pipInstalled and len(packagesMissing) == 0: #If both pip and PIL are installed
@@ -29,7 +30,8 @@ def install():
  ###################################################################################################   
     if not pipInstalled: #If pip is not installed
         print("Pip was not found on the system.")
-        answer = input("Would you like to install the pip command? [y/n] ")
+        #answer = input("Would you like to install the pip command? [y/n] ")
+        answer = "y"
         
         if answer.lower() in ["y", "yes"]:
             print("Preparing to install Pip...")
@@ -37,7 +39,8 @@ def install():
             
             if not pipSuccess:
                 print("Error occurred when installing pip")
-                if not input("Would you like to try to continue anyways?[y/n] ").lower() in ["y", "yes"]:
+                #if not input("Would you like to try to continue anyways?[y/n] ").lower() in ["y", "yes"]:
+                if False:
                     return
 
             else:
@@ -49,7 +52,8 @@ def install():
 ###################################################################################################    
     for pkg in packagesMissing:
         print("Package {} was not found on the system.".format(pkg[0]))
-        answer = input("Would you like to install the {} package? [y/n] ".format(pkg[0]))
+        #answer = input("Would you like to install the {} package? [y/n] ".format(pkg[0]))
+        answer = "y"
 
         if answer.lower() in ["y", "yes"]:
             print("Preparing to install {}...".format(pkg[0]))
@@ -57,7 +61,8 @@ def install():
             
             if not pkgSuccess:
                 print("Error occurred when installing {}".format(pkg[0]))
-                if not input("Would you like to try to continue anyways?[y/n] ").lower() in ["y", "yes"]:
+                #if not input("Would you like to try to continue anyways?[y/n] ").lower() in ["y", "yes"]:
+                if False:
                     return
             else:
                 print("{} was installed successfully!".format(pkg[0]))

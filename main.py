@@ -9,8 +9,37 @@ from icons import military, money, nature, people
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
-#import pygame #Winsound isn't supported on mac :(
 import json
+
+
+def soundInstall():
+    #try to import pygame, resort to winsound, if needed, otherwise no engine
+    global sound_engine
+    sound_engine = None
+    try:
+        global pygame
+        import pygame
+        sound_engine = "pygame"
+    except ModuleNotFoundError:
+        print("***ERROR***")
+        print("Pygame was not imported successfully.\nFixes:")
+        print("1. Pygame was not installed to the system correctly. The problem then lies in the package installer. Possible fix: Try restating the program.")
+        print("2. Pygame is not compatible with your version of Python, most likely Python 3.8.x. Fix: Downgrade to Python 3.7.x or lower.")
+
+        from os import name
+        Windows = True if name == "nt" else False
+        if Windows:
+            try:
+                from winsound import PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
+                sound_engine = "winsound"
+            except (ModuleNotFoundError, ImportError):
+                print("***ERROR***")
+                print("Winsound could not be imported. Reason: unknown")
+                print("Neither winsound nor pygame could be imported properly. No sound can be played.")
+        else:
+            print("***ERROR***")
+            print("Winsound could not be installed due to your operating system. Your OS must be Windows.")
+            print("Neither winsound nor pygame could be imported properly. No sound can be played.")
 
 
 def copyFile(copyFrom, copyTo): #copys JSON file
@@ -27,9 +56,6 @@ def copyFile(copyFrom, copyTo): #copys JSON file
 
 def create_circle(screen, x, y, radius, **kwargs):
     return screen.create_oval(x-radius, y+radius, x+radius, y-radius, **kwargs)
-
-def play():
-    return PlaySound("click_one.wav", SND_FILENAME)
 
 #Cards that have the given situations and it's details
 class card:
@@ -149,13 +175,15 @@ class card:
 
 
 class menu:
-    def __init__(self, screen):
+    def menuScreen(self, screen):
         self.screen = screen
         self.background = resize_image(Image.open("pictures/background.png"), self.screen.winfo_width(), self.screen.winfo_width())
         self.background = pack(self.background)
         self.background_image = screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
+        self.startMusic()
+
         for i in range(1, 50):
             title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
             self.screen.update()
@@ -163,6 +191,12 @@ class menu:
             self.screen.delete(title)
         self.title = screen.create_text(self.screen.winfo_width()//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
         screen.mainloop()
+    
+    def startMusic(self):
+        if sound_engine == "pygame":
+            pygame.mixer.init()
+            pygame.mixer.music.load("other/adrenaline.wav")
+            pygame.mixer.music.play(-1)
 
 #Class for user interaction
 class user:
@@ -227,6 +261,7 @@ class user:
 class anarchy(user, menu):
     def __init__(self):
         #Normal Tkinter stuff
+        soundInstall()
         self.root = Tk()
         self.root.attributes('-fullscreen', True)  
         self.fullScreenState = False
@@ -237,7 +272,7 @@ class anarchy(user, menu):
         self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9", highlightthickness = 0)
         self.screen.pack()
         self.screen.update()
-        self.menu_screen = menu(self.screen)
+        self.menu_screen = self.menuScreen(self.screen)
 
     def set_up(self):
         self.week = 0 #week counter
