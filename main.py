@@ -16,12 +16,12 @@ def soundInstall():
     #try to import pygame, resort to winsound, if needed, otherwise no engine
     global sound_engine
     sound_engine = None
-    try:
+    try: #first try pygame
         global pygame
         import pygame
         sound_engine = "pygame"
-        print("USING PYGAME")
-    except ModuleNotFoundError:
+        print("USING PYGAME FOR SOUND")
+    except ModuleNotFoundError: #Now try winsound
         print("***ERROR***")
         print("Pygame was not imported successfully.\nFixes:")
         print("1. Pygame was not installed to the system correctly. The problem then lies in the package installer. Possible fix: Try restating the program.")
@@ -33,7 +33,7 @@ def soundInstall():
             try:
                 from winsound import PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
                 sound_engine = "winsound"
-                print("USING WINSOUND")
+                print("USING WINSOUND FOR SOUND")
             except (ModuleNotFoundError, ImportError):
                 print("***ERROR***")
                 print("Winsound could not be imported. Reason: unknown")
@@ -179,22 +179,23 @@ class card:
 class menu:
     def menuScreen(self, screen):
         self.screen = screen
+        screen.delete("all") #Clear screen
         width, height = screen.winfo_width(), screen.winfo_height()
         
-        self.background = resize_image(Image.open("pictures/background.png"), width, width)
+        self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
         self.background_image = screen.create_image(
             width//2, height//2, anchor = "center", image = self.background
         )
-        self.startMusic()
+        self.startMusic() #Start music
 
-        for i in range(1, 50):
+        for i in range(1, 50): #Fade in title
             title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
             screen.update()
             sleep(0.1)
             screen.delete(title)
         
-        menuButtons = self.menuButtons = {}
+        menuButtons = self.menuButtons = {} #Buttons
         self.title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
         self.buttonNames = ["quit", "help", "load", "easy", "hard"]
 
@@ -214,6 +215,7 @@ class menu:
                 width-150, (2*height-200-2*(i*175))//2, anchor = "center", text = self.buttonNames[i+2].title(), font = ("Courier", 50), fill = "black"
             )
 
+        #Lots of bindings
         screen.tag_bind(menuButtons["quitButton"], "<Button-1>", self.masterQuit)
         screen.tag_bind(menuButtons["quitText"], "<Button-1>", self.masterQuit)
         screen.tag_bind(menuButtons["helpButton"], "<Button-1>", self.displayHelp)
@@ -227,20 +229,39 @@ class menu:
 
         screen.mainloop()
     
-    def displayHelp(self, event):
-        print()
-    
-    def loadData(self, event):
+    def displayHelp(self, event): #Displays help
+        self.screen.delete("all") #Clear canvas
+        self.background_image = self.screen.create_image( #Backgound image
+            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
+        )
+        with open("instructions.txt", "r") as instruction_file: #Display instructions
+            self.screen.create_text(10, 10, anchor = "nw", width = self.screen.winfo_width()-20, fill = "white", font = ("Coruier", 30), text = instruction_file.readline())
+
+        backButton = self.screen.create_rectangle( #Button to return
+            10, self.screen.winfo_height()-10, 260, self.screen.winfo_height()-110, fill = "grey50", outline = "grey50"
+        )
+        backText = self.screen.create_text(
+            135, self.screen.winfo_height()-60, anchor = "center", text = "Back", font = ("Courier", 50), fill = "black"
+        )
+        self.screen.tag_bind(backButton, "<Button-1>", self.toMenu)
+        self.screen.tag_bind(backText, "<Button-1>", self.toMenu)
+        self.screen.update()
+        self.screen.mainloop()
+
+    def toMenu(self, event): #Return to menu
+        self.menuScreen(self.screen)
+
+    def loadData(self, event): #Work in progress, load previously saved data
         print("WIP")
 
-    def runHard(self, event):
+    def runHard(self, event): #Run gamemode hard
         self.screen.delete("all")
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
         self.runGame("h")
     
-    def runEasy(self, event):
+    def runEasy(self, event): #Run gamemose easy
         self.screen.delete("all")
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
@@ -248,17 +269,17 @@ class menu:
         self.runGame("e")
 
 
-    def startMusic(self):
-        if sound_engine == "pygame":
+    def startMusic(self): #Stat music
+        if sound_engine == "pygame": #If using pygame
             pygame.mixer.init()
             pygame.mixer.music.load("other/adrenaline.mp3")
             pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
 
-        elif sound_engine == "winsound":
+        elif sound_engine == "winsound": #If using winsound
             PlaySound('other/adrenaline.mp3', SND_LOOP + SND_ASYNC)
         
-        else:
+        else: #Tell user no music is being played
             self.screen.create_text(
                 self.screen.winfo_width()//2, self.screen.winfo_height()-10, anchor = "s", text = "ERROR: Sound can't play. Check console for more details.", fill = "red", font = ("Courier", 10)
             )
@@ -328,16 +349,21 @@ class anarchy(user, menu):
         #Normal Tkinter stuff
         soundInstall()
         self.root = Tk()
-        self.root.attributes('-fullscreen', True)  
+        self.root.attributes('-fullscreen', True) #Fullscreen
         self.fullScreenState = False
         self.root.bind("<f>", self.fullScreenToggle)
         self.root.bind("<Escape>", self.masterQuit)
+        self.root.bind("q", self.qPress)
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         #Fullscreen game, canvas size based on resolution
         self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9", highlightthickness = 0)
         self.screen.pack()
         self.screen.update()
+        self.qPressed = False
         self.menu_screen = self.menuScreen(self.screen)
+
+    def qPress(self, event):
+        self.qPressed = True
 
     def set_up(self):
         self.week = 0 #week counter
@@ -364,10 +390,12 @@ class anarchy(user, menu):
             self.screen.update()
             sleep(0.03)
 
+    #Toggles full screen
     def fullScreenToggle(self, event):
         self.fullScreenState = not self.fullScreenState
         self.root.attributes("-fullscreen", self.fullScreenState)
 
+    #Complete termination of the program
     def masterQuit(self, event):
         try: self.root.destroy()
         except: pass
@@ -432,7 +460,7 @@ class anarchy(user, menu):
 
     #Check if values are too low, and if user looses the game
     def check_values(self):
-        kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44)}
+        kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44), "width": self.screen.winfo_width()-20}
         args = int(self.screen['width'])//2, int(self.screen['height'])//2
 
         #Gives game over message
@@ -440,20 +468,22 @@ class anarchy(user, menu):
             self.screen.create_text(*args, **kwargs)
             self.screen.delete(self.leftButton, self.rightButton)
             self.screen.update()
-            sleep(5)
+            sleep(3)
+            self.screen.delete("all")
+            self.menuScreen(self.screen)
             exit()
 
         if self.gun.current == 0:
-            kwargs['text'] = "Military too weak, you loose"
+            kwargs['text'] = "You've been invaded! Your week military didn't last a chance! Your country collapses into anarchy."
             endgame(args, kwargs)
         elif self.dollar.current == 0:
-            kwargs['text'] = "Greece v2 electric boogaloo"
+            kwargs['text'] = "You're out of money, can't pay for anything, and your country has collapsed into anarchy."
             endgame(args, kwargs)
         elif self.person.current == 0:
-            kwargs['text'] = "Rebelion"
+            kwargs['text'] = "Displeasure amongst the people has gotten you assasinated, and your country collapses into anarchy. "
             endgame(args, kwargs)
         elif self.leaf.current == 0:
-            kwargs['text'] = "Turtles died"
+            kwargs['text'] = "When nature falls, everyone goes with it. Food becomes ever more scarce, and your country collapses into anarchy."
             endgame(args, kwargs)
 
     def get_targets(self):
@@ -479,7 +509,7 @@ class anarchy(user, menu):
     def runGame(self, difficulty):
         self.set_up()
         self.difficulty = difficulty
-        for _ in range(53): #52 weeks in a year
+        while self.week <= 52 and not self.qPressed: #52 weeks in a year
             self.card1 = card(self.screen) #Instantiate new card
             self.card1.draw() #Draw the card
             self.draw_arrows() #Draw yes or no arrows
@@ -518,6 +548,8 @@ class anarchy(user, menu):
             del self.card1 #Delete card
             self.screen.delete(self.leftButton, self.rightButton, numWeeks) #Delete other things
             self.week += 1 #increment week
+
+        if self.qPressed: self.menuScreen(self.screen)
 
 
 if __name__ == "__main__":
