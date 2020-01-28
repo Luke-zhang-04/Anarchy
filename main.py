@@ -32,9 +32,9 @@ def soundInstall():
         Windows = True if name == "nt" else False
         if Windows:
             try:
-                global PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
-                from winsound import PlaySound, SND_LOOP, SND_ASYNC, SND_PURGE
-                sound_engine = "winsound"
+                global PlaySound, SND_LOOP, SND_ASYNC
+                from winsound import PlaySound, SND_LOOP, SND_ASYNC
+                sound_engine = "winsound" 
                 print("USING WINSOUND FOR SOUND")
             except ImportError:
                 print("***ERROR***")
@@ -63,22 +63,30 @@ def create_circle(screen, x, y, radius, **kwargs):
 
 #Cards that have the given situations and it's details
 class card:
-    def __init__(self, screen):
+    def __init__(self, screen, finished = False, person = None, situation = None):
         self.body = self.top_area = self.image_file = self.image_file = self.image = self.person = self.text = None
         self.screen = screen #Canvas
         self.decided = False #If user has decided
         self.choice = None #If user decided yes or no
         
-        #Gets random situation
-        with open('choices-user.json') as fin:
-            data = json.load(fin) #Load data
-            #Get random person to speak to
-            situation = choice(list(data['choices']))
-            self.person_key = situation
-            situation = data['choices'][situation]
-            self.person = situation[0] #Random person
-            #Get random situation from that person
-            self.situation = choice(situation[1:]) #Random situation
+        if not finished:
+            #Gets random situation
+            with open('choices-user.json') as fin:
+                data = json.load(fin) #Load data
+                #Get random person to speak to
+                situation = choice(list(data['choices']))
+                self.person_key = situation
+                situation = data['choices'][situation]
+                self.person = situation[0] #Random person
+                #Get random situation from that person
+                self.situation = choice(situation[1:]) #Random situation
+        else:
+            self.person = person
+            self.situation = {
+                "description": situation,
+                "true": {"people": 0, "military": 0, "economy": 0, "nature": 0},
+                "false": {"people": 0, "military": 0, "economy": 0, "nature": 0}
+            }
 
     #Once a situation has been used, it needs to be deleted
     def delete_key(self):
@@ -539,7 +547,7 @@ class anarchy(user, menu):
     def runGame(self, difficulty):
         self.set_up()
         self.difficulty = difficulty
-        while self.month <= 52 and not self.qPressed: #52 weeks in a year
+        while self.month <= 1 and not self.qPressed: #52 weeks in a year
             self.card1 = card(self.screen) #Instantiate new card
             self.card1.draw() #Draw the card
             self.draw_arrows() #Draw yes or no arrows
@@ -597,6 +605,11 @@ class anarchy(user, menu):
             except AttributeError: pass
 
             self.menuScreen(self.screen)
+        else:
+            vp = {"title": "Vice President Russel", "image": ["pictures/vp.png", 200, 150]}
+            sit = "Congratulations on a successful term, president. You'll be glad to hear that the country is in good shape, and everything is still intact."
+            self.card1 = card(self.screen, finished = True, person = vp, situation = sit) #Instantiate new card
+            self.card1.draw() #Draw the card
         
 
 
