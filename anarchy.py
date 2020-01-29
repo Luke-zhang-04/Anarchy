@@ -241,8 +241,8 @@ class menu:
             )
 
         #Lots of bindings
-        screen.tag_bind(menuButtons["quitButton"], "<Button-1>", self.masterQuit)
-        screen.tag_bind(menuButtons["quitText"], "<Button-1>", self.masterQuit)
+        screen.tag_bind(menuButtons["quitButton"], "<Button-1>", self.quit_program)
+        screen.tag_bind(menuButtons["quitText"], "<Button-1>", self.quit_program)
         screen.tag_bind(menuButtons["helpButton"], "<Button-1>", self.displayHelp)
         screen.tag_bind(menuButtons["helpText"], "<Button-1>", self.displayHelp)
         screen.tag_bind(menuButtons["loadButton"], "<Button-1>", self.loadData)
@@ -335,7 +335,7 @@ class user:
         cords = self.screen.coords(self.leftButton) if not option else self.screen.coords(self.rightButton)
         word = self.negative_word if not option else self.positive_word
         option = 'true' if option else 'false'
-        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = word, fill = "white", font = ("Courier", 15))
+        self.temp_text = self.screen.create_text((cords[0]+cords[2])//2, cords[1]+100, text = word, fill = "white", font = ("Courier", 15))
         self.indicators(self.card1.situation[option])
     
     #User takes mouse off a button
@@ -343,7 +343,6 @@ class user:
         self.screen.delete(self.temp_text)
         for i in self.indicatorArray:
             self.screen.delete(i)
-
 
 #Anarchy game
 class anarchy(user, menu):
@@ -354,14 +353,17 @@ class anarchy(user, menu):
         self.root.attributes('-fullscreen', True) #Fullscreen
         self.fullScreenState = False
         self.root.bind("<f>", self.fullScreenToggle)
-        self.root.bind("<Escape>", self.masterQuit)
+        self.root.bind("<Escape>", self.quit_program)
         self.root.bind("q", self.qPress)
         self.resolution = self.root.winfo_screenwidth(), self.root.winfo_screenheight()
         #Fullscreen game, canvas size based on resolution
-        self.screen = Canvas(self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9", highlightthickness = 0)
+        self.screen = Canvas(
+            self.root, width=self.resolution[0], height=self.resolution[1], background = "gray9", highlightthickness = 0
+        )
+
         self.screen.pack()
         self.screen.update()
-        self.qPressed = False
+        self.qPressed = self.escPressed = False
         self.menuStart(self.screen)
 
     def qPress(self, event):
@@ -398,11 +400,12 @@ class anarchy(user, menu):
         self.root.attributes("-fullscreen", self.fullScreenState)
 
     #Complete termination of the program
-    def masterQuit(self, event):
-        #try: self.root.destroy()
+    def quit_program(self, event):
+        self.escPressed = True
         try: self.root.quit()
         except: pass
         exit()
+        self.root.destroy()
         
     #Circles underneath effected icons
     def indicators(self, values):
@@ -419,6 +422,11 @@ class anarchy(user, menu):
 
     #Draw yes or no option arrows
     def draw_arrows(self):
+        card = self.screen.coords(self.card1.body)[-2], self.screen.coords(self.card1.body)[8]
+        self.leftButton = create_circle(self.screen, card[0]-200, 360, 25, fill = "black", outline = "black")
+        self.rightButton = create_circle(self.screen, card[1]+200, 360, 25, fill = "black", outline = "black")
+        
+        '''
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
         self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
         self.leftPhotoImg = pack(self.left)
@@ -426,7 +434,10 @@ class anarchy(user, menu):
         card = self.screen.coords(self.card1.body)[-2], self.screen.coords(self.card1.body)[8]
         self.leftButton = self.screen.create_image(card[0]-200, 360, image = self.leftPhotoImg)
         self.rightButton = self.screen.create_image(card[1]+200, 360, image = self.rightPhotoImg)
+        '''
         self.screen.update()
+        
+        
     
     #Animate icons, takes in dict of values
     def animate_icons(self, comparison):
@@ -527,10 +538,10 @@ class anarchy(user, menu):
 
             self.screen.update()
             while not self.card1.decided: #Wait for user to decide
-                if self.qPressed: break
+                if self.qPressed or self.escPressed: break
                 self.screen.update()
                 sleep(0.01)
-            if self.qPressed: break
+            if self.qPressed or self.escPressed: break
         
             self.targets, direction = self.get_targets()
             move_finished = icons_finished = False
