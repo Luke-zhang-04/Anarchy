@@ -425,7 +425,31 @@ class anarchy(user, menu):
         card = self.screen.coords(self.card1.body)[-2], self.screen.coords(self.card1.body)[8]
         self.leftButton = create_circle(self.screen, card[0]-200, 360, 25, fill = "black", outline = "black")
         self.rightButton = create_circle(self.screen, card[1]+200, 360, 25, fill = "black", outline = "black")
+        x = card[0]
+        arrowPoints = [
+            x-212.5, 360,
+            x-202.5, 350,
+            x-202.5, 355,
+            x-187.5, 355,
+            x-187.5, 365,
+            x-202.5, 365,
+            x-202.5, 370,
+            x-212.5, 360
+        ]
+        self.leftButtonArrow = self.screen.create_polygon(*arrowPoints, fill = "white", outline = "white")
         
+        x = card[1]
+        arrowPoints = [
+            x+212.5, 360,
+            x+202.5, 350,
+            x+202.5, 355,
+            x+187.5, 355,
+            x+187.5, 365,
+            x+202.5, 365,
+            x+202.5, 370,
+            x+212.5, 360
+        ]
+        self.rightButtonArrow = self.screen.create_polygon(*arrowPoints, fill = "white", outline = "white")
         '''
         self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
         self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
@@ -435,6 +459,7 @@ class anarchy(user, menu):
         self.leftButton = self.screen.create_image(card[0]-200, 360, image = self.leftPhotoImg)
         self.rightButton = self.screen.create_image(card[1]+200, 360, image = self.rightPhotoImg)
         '''
+        
         self.screen.update()
         
         
@@ -490,10 +515,10 @@ class anarchy(user, menu):
             kwargs['text'] = "You've been invaded! Your week military didn't last a chance! Your country collapses into anarchy."
             endgame(args, kwargs)
         elif self.dollar.current == 0:
-            kwargs['text'] = "You're out of money, can't pay for anything, and your country has collapsed into anarchy."
+            kwargs['text'] = "The country is out of money. You're in crippling debt, bankrupt, and can't pay for anythinga. Your country has collapsed into anarchy."
             endgame(args, kwargs)
         elif self.person.current == 0:
-            kwargs['text'] = "Displeasure amongst the people has gotten you assasinated, and your country collapses into anarchy. "
+            kwargs['text'] = "Displeasure amongst the people has some people very mad. You seem to have been poisoned by a mysterious substance. Soon, you will be dead, and your country collapses into anarchy. "
             endgame(args, kwargs)
         elif self.leaf.current == 0:
             kwargs['text'] = "When nature falls, everyone goes with it. Food becomes ever more scarce, and your country collapses into anarchy."
