@@ -19,32 +19,43 @@ def soundInstall():
     sound_engine = None
 
     try: #first try pygame
+        print("\nTrying to import Pygame")
         global pygame
         import pygame
         sound_engine = "pygame"
-        print("USING PYGAME FOR SOUND")
     except ImportError: #Now try winsound
-        print("***ERROR***")
-        print("Pygame was not imported successfully.\nFixes:")
-        print("1. Pygame was not installed to the system correctly. The problem then lies in the package installer. Possible fix: Try restating the program.")
-        print("2. Pygame is not compatible with your version of Python, most likely Python 3.8.x. Fix: Downgrade to Python 3.7.x or lower.")
-
         from os import name
         Windows = True if name == "nt" else False
+        print("***ERROR***")
+        print("Pygame was not imported successfully.\nFixes:")
+        print("1. Pygame is not compatible with your version of Python. Fix: Downgrade/upgrade to Python 3.7.x.")
+        print("2. Pygame was not installed correctly through pip. Fixes:")
+        print("\ta. Restart the program")
+        if Windows:
+            print("\tb. In powershell or command prompt, type \"py3 -m pip install -U pygame --user\"")
+        else:
+            print("\tb. In bash, type \"python3 -m pip install pygame\"")
+        
         if Windows:
             try:
+                print('\nTrying to import winsound')
                 global PlaySound, SND_LOOP, SND_ASYNC
                 from winsound import PlaySound, SND_LOOP, SND_ASYNC
                 sound_engine = "winsound" 
                 print("USING WINSOUND FOR SOUND")
             except ImportError:
-                print("***ERROR***")
-                print("Winsound could not be imported. Reason: unknown")
+                print("\n***ERROR***")
+                print("Winsound was not imported successfully. Reason: unknown")
                 print("Neither winsound nor pygame could be imported properly. No sound can be played.")
+            else:
+                print("Success: winsound imported\nUsing winsound for sound")
         else:
             print("***ERROR***")
-            print("Winsound could not be installed due to your operating system. Your OS must be Windows.")
+            print("Winsound was not imported successfully.\nFixes:")
+            print("Probably nothing. Winsound only works on Windows.")
             print("Neither winsound nor pygame could be imported properly. No sound can be played.")
+    else:
+        print("Success: pygame imported\nUsing Pygame for sound")
 
 
 def copyFile(copyFrom, copyTo): #copys JSON file
