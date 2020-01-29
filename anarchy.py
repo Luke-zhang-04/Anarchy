@@ -202,25 +202,37 @@ class menu:
     def menuScreen(self, screen):
         self.screen = screen
         
-        #screen.delete("all") #Clear screen
         width, height = screen.winfo_width(), screen.winfo_height()
-        
-        '''
-        self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
-        self.background = pack(self.background)
-        self.background_image = screen.create_image(
-            width//2, height//2, anchor = "center", image = self.background
-        )
-        self.startMusic() #Start music
-        '''
 
-        for i in range(1, 50): #Fade in title
+        for i in range(9, 50, 2): #Fade in title
             title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
+        
+            menuButtons = self.menuButtons = {} #Buttons
+            
+            self.buttonNames = ["quit", "help", "load", "easy", "hard"]
+
+            for j in range(2):
+                self.menuButtons[self.buttonNames[j] + "Button"] = screen.create_rectangle(
+                    25, height-25-(j*175), 275, height-175-(j*175), fill = "grey" + str(i), outline = "gray" + str(i)
+                ) 
+                self.menuButtons[self.buttonNames[j] + "Text"] = screen.create_text(
+                    150, (2*height-200-2*(j*175))//2, anchor = "center", text = self.buttonNames[j].title(), font = ("Courier", 50), fill = "black"
+                )
+            
+            for j in range(3):
+                self.menuButtons[self.buttonNames[j+2] + "Button"] = screen.create_rectangle(
+                    width-275, height-25-(j*175), width-25, height-175-(j*175), fill = "grey" + str(i), outline = "gray" + str(i)
+                ) 
+                self.menuButtons[self.buttonNames[j+2] + "Text"] = screen.create_text(
+                    width-150, (2*height-200-2*(j*175))//2, anchor = "center", text = self.buttonNames[j+2].title(), font = ("Courier", 50), fill = "black"
+                )
+            
             screen.update()
             sleep(0.1)
             screen.delete(title)
-        
-        menuButtons = self.menuButtons = {} #Buttons
+
+            for i in menuButtons: screen.delete(menuButtons[i])
+
         self.title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
         self.buttonNames = ["quit", "help", "load", "easy", "hard"]
 
@@ -318,12 +330,16 @@ class user:
         self.screen.tag_bind(self.leftButton, "<Button-1>", lambda event: self.choose_option(False))
         self.root.bind("<Left>", lambda event: self.click_option(False, arrow = False))
         self.screen.tag_bind(self.leftButton, "<Enter>", lambda event: self.enter_option(False))
+        self.screen.tag_bind(self.leftButtonArrow, "<Enter>", lambda event: self.enter_option(False))
         self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
+        self.screen.tag_bind(self.leftButtonArrow, "<Leave>", self.leave)
 
         self.screen.tag_bind(self.rightButton, "<Button-1>", lambda event: self.choose_option(True))
         self.root.bind("<Right>", lambda event: self.click_option(True, arrow = True))
         self.screen.tag_bind(self.rightButton, "<Enter>", lambda event: self.enter_option(True))
+        self.screen.tag_bind(self.rightButtonArrow, "<Enter>", lambda event: self.enter_option(True))
         self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
+        self.screen.tag_bind(self.rightButtonArrow, "<Leave>", self.leave)
     
     def choose_option(self, option, arrow = False):
         self.card1.decided = True
@@ -505,7 +521,7 @@ class anarchy(user, menu):
         #Gives game over message
         def endgame(*args, **kwargs):
             self.screen.create_text(*args, **kwargs)
-            self.screen.delete(self.leftButton, self.rightButton)
+            self.screen.delete(self.leftButton, self.rightButton, self.leftButtonArrow, self.rightButtonArrow)
             self.screen.update()
             sleep(3)
             self.screen.delete("all")
@@ -599,7 +615,7 @@ class anarchy(user, menu):
             try: del self.card1 #Delete card
             except AttributeError: pass
             
-            self.screen.delete(self.leftButton, self.rightButton, numMonths) #Delete other things
+            self.screen.delete(self.leftButton, self.rightButton, numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
 
             try: self.leave("")
             except AttributeError: pass
