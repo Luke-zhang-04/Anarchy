@@ -247,10 +247,10 @@ class menu:
         screen.tag_bind(menuButtons["helpText"], "<Button-1>", self.displayHelp)
         screen.tag_bind(menuButtons["loadButton"], "<Button-1>", self.loadData)
         screen.tag_bind(menuButtons["loadText"], "<Button-1>", self.loadData)
-        screen.tag_bind(menuButtons["hardButton"], "<Button-1>", self.runHard)
-        screen.tag_bind(menuButtons["hardText"], "<Button-1>", self.runHard)
-        screen.tag_bind(menuButtons["easyButton"], "<Button-1>", self.runEasy)
-        screen.tag_bind(menuButtons["easyText"], "<Button-1>", self.runEasy)
+        screen.tag_bind(menuButtons["hardButton"], "<Button-1>", lambda event: self.runDifficulty("h"))
+        screen.tag_bind(menuButtons["hardText"], "<Button-1>", lambda event: self.runDifficulty("h"))
+        screen.tag_bind(menuButtons["easyButton"], "<Button-1>", lambda event: self.runDifficulty("e"))
+        screen.tag_bind(menuButtons["easyText"], "<Button-1>", lambda event: self.runDifficulty("e"))
 
         screen.mainloop()
     
@@ -285,18 +285,8 @@ class menu:
 
     def loadData(self, event): #Work in progress, load previously saved data
         print("WIP")
-
-    def runHard(self, event): #Run gamemode hard
-        #self.screen.delete("all")
-        self.screen.delete(self.title) #Clear canvas
-        for i in self.menuButtons:
-            self.screen.delete(self.menuButtons[i])
-        self.background_image = self.screen.create_image(
-            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
-        )
-        self.runGame("h")
     
-    def runEasy(self, event): #Run gamemose easy
+    def runDifficulty(self, difficulty):
         #self.screen.delete("all")
         self.screen.delete(self.title) #Clear canvas
         for i in self.menuButtons:
@@ -304,8 +294,7 @@ class menu:
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
-        self.runGame("e")
-
+        self.runGame("difficulty")
 
     def startMusic(self): #Stat music
         if sound_engine == "pygame": #If using pygame
@@ -326,53 +315,28 @@ class menu:
 class user:
     def bindKeys(self):
         #Key bindings
-        self.screen.tag_bind(self.leftButton, "<Button-1>", self.click_no)
-        self.root.bind("<Left>", self.arrow_no)
-        self.screen.tag_bind(self.leftButton, "<Enter>", self.enter_no)
+        self.screen.tag_bind(self.leftButton, "<Button-1>", lambda event: self.choose_option(False))
+        self.root.bind("<Left>", lambda event: self.click_option(False, arrow = False))
+        self.screen.tag_bind(self.leftButton, "<Enter>", lambda event: self.enter_option(False))
         self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
 
-        self.screen.tag_bind(self.rightButton, "<Button-1>", self.click_yes)
-        self.root.bind("<Right>", self.arrow_yes)
-        self.screen.tag_bind(self.rightButton, "<Enter>", self.enter_yes)
+        self.screen.tag_bind(self.rightButton, "<Button-1>", lambda event: self.choose_option(True))
+        self.root.bind("<Right>", lambda event: self.click_option(True, arrow = True))
+        self.screen.tag_bind(self.rightButton, "<Enter>", lambda event: self.enter_option(True))
         self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
     
-    #If user clicks no
-    def click_no(self, event):
+    def choose_option(self, option, arrow = False):
         self.card1.decided = True
-        self.card1.choice = False
-        self.screen.delete(self.temp_text)
+        self.card1.choice = option
+        if not arrow: self.screen.delete(self.temp_text)
         self.card1.delete_key()
-
-    #If user clicks yes
-    def click_yes(self, event): 
-        self.card1.choice = self.card1.decided = True
-        self.screen.delete(self.temp_text)
-        self.card1.delete_key()
-
-    #If user uses arrow to signal no
-    def arrow_no(self, event): 
-        self.card1.decided = True
-        self.card1.choice = False
-        self.card1.delete_key()
-
-    #If user uses arrow to signal yes
-    def arrow_yes(self, event):
-        self.card1.choice = self.card1.decided = True
-        self.card1.delete_key()
-
-    #User hovers mouse over no button
-    def enter_no(self, event):
-        #Show no message
-        cords = self.screen.coords(self.leftButton)
-        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.negative_word, fill = "white", font = ("Courier", 15))
-        self.indicators(self.card1.situation['false'])
-
-    #User hovers mouse over yes button
-    def enter_yes(self, event):
-        #Show yes message
-        cords = self.screen.coords(self.rightButton)
-        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = self.positive_word, fill = "white", font = ("Courier", 15))
-        self.indicators(self.card1.situation['true'])
+    
+    def enter_option(self, option):
+        cords = self.screen.coords(self.leftButton) if not option else self.screen.coords(self.rightButton)
+        word = self.negative_word if not option else self.positive_word
+        option = 'true' if option else 'false'
+        self.temp_text = self.screen.create_text(cords[0], cords[1]+100, text = word, fill = "white", font = ("Courier", 15))
+        self.indicators(self.card1.situation[option])
     
     #User takes mouse off a button
     def leave(self, event):
@@ -435,7 +399,8 @@ class anarchy(user, menu):
 
     #Complete termination of the program
     def masterQuit(self, event):
-        try: self.root.destroy()
+        #try: self.root.destroy()
+        try: self.root.quit()
         except: pass
         exit()
         
@@ -509,7 +474,6 @@ class anarchy(user, menu):
             sleep(3)
             self.screen.delete("all")
             self.menuScreen(self.screen)
-            exit()
 
         if self.gun.current == 0:
             kwargs['text'] = "You've been invaded! Your week military didn't last a chance! Your country collapses into anarchy."
@@ -612,6 +576,5 @@ class anarchy(user, menu):
             self.card1.draw() #Draw the card
         
 
-
 if __name__ == "__main__":
-    game = anarchy()
+    anarchy()
