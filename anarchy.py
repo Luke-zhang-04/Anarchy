@@ -10,6 +10,8 @@ from card import card
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
+import Queue
+from threading import Thread
 import json
 
 
@@ -76,14 +78,41 @@ def create_circle(screen, x, y, radius, **kwargs):
 
 class menu:
     def menuStart(self, screen):
+        def percentage_display(screen, percentRange, old = None, time = None):
+            if old != None: percentage = old 
+            for i in percentRange:
+                screen.delete(percentage)
+                percentage = screen.create_text(width//2, (height//2)+100, text = str(i) + "%", **textKwargs)
+                screen.update()
+                sleep(0.0001 if time == None else time/(max(percentRange)-min(percentRange)))
+            return percentage
+
         self.screen = screen
         width, height = screen.winfo_width(), screen.winfo_height()
-        screen.delete("all") #Clear screen
+        textKwargs = {"anchor": "center", "font": ("Courier", 44), "fill": "white"}
+
+        text = screen.create_text(width//2, height//2, text = "Loading . . .", **textKwargs)
+        percentage = screen.create_text(width//2, (height//2)+100, text = "0%", **textKwargs)
+        screen.update()
+
         self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
+        percentage = percentage_display(screen, range(76), old = percentage, time = 5)
+
+        self.background2 = resize_image(Image.open("pictures/skyline.png"), width, height//2)
+        self.background2 = pack(self.background2)
+        percentage = percentage_display(screen, range(76, 101), old = percentage, time = 2)
+
+
         self.background_image = screen.create_image(
             width//2, height//2, anchor = "center", image = self.background
         )
+        self.background_image2 = screen.create_image(
+            width//2, height, anchor = "s", image = self.background2
+        )
+        screen.delete(text, percentage)
+        screen.update()
+
         self.startMusic() #Start music
         self.menuScreen(self.screen)
 
@@ -191,9 +220,11 @@ class menu:
         self.screen.delete(self.title) #Clear canvas
         for i in self.menuButtons:
             self.screen.delete(self.menuButtons[i])
+        '''
         self.background_image = self.screen.create_image(
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
+        '''
         self.runGame("difficulty")
 
     def startMusic(self): #Stat music
