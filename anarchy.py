@@ -488,11 +488,11 @@ class anarchy(user, menu):
         comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
         if self.difficulty == "h":
             amt = 5
-        elif self.difficulty = "m":
+        elif self.difficulty == "m":
             amt = 3
         else:
             amt = 0
-            
+
         for i in comparison:
             if comparison[i] < 0:
                 comparison[i] -= amt
