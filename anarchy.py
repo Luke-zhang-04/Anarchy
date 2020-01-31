@@ -1,17 +1,19 @@
+#installing packages from pip
 from lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
 install()
 
+#third party packages
 from PIL import Image
 
+#cutsom packages
 from imageFunctions import pack, resize_image, crop_image
 from icons import military, money, nature, people
 from card import card
 
+#Built in packages
 from tkinter import Tk, Canvas
 from time import sleep
 from random import choice
-import Queue
-from threading import Thread
 import json
 
 
@@ -97,11 +99,12 @@ class menu:
 
         self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
-        percentage = percentage_display(screen, range(76), old = percentage, time = 5)
+        percentage = percentage_display(screen, range(76), old = percentage)
+
 
         self.background2 = resize_image(Image.open("pictures/skyline.png"), width, height//2)
         self.background2 = pack(self.background2)
-        percentage = percentage_display(screen, range(76, 101), old = percentage, time = 2)
+        percentage = percentage_display(screen, range(76, 101), old = percentage)
 
 
         self.background_image = screen.create_image(
@@ -187,11 +190,7 @@ class menu:
         self.screen.delete(self.title) #Clear canvas
         for i in self.menuButtons:
             self.screen.delete(self.menuButtons[i])
-        '''
-        self.background_image = self.screen.create_image( #Backgound image
-            self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
-        )
-        '''
+            
         with open("instructions.txt", "r") as instruction_file: #Display instructions
             self.instruction_text = self.screen.create_text(
                 10, 10, anchor = "nw", width = self.screen.winfo_width()-20, fill = "white", font = ("Courier", 30), text = instruction_file.readline()
@@ -248,7 +247,7 @@ class user:
         #Key bindings
         self.screen.tag_bind(self.leftButton, "<Button-1>", lambda event: self.choose_option(False))
         self.screen.tag_bind(self.leftButtonArrow, "<Button-1>", lambda event: self.choose_option(False))
-        self.root.bind("<Left>", lambda event: self.click_option(False, arrow = False))
+        self.root.bind("<Left>", lambda event: self.choose_option(False))
         self.screen.tag_bind(self.leftButton, "<Enter>", lambda event: self.enter_option(False))
         self.screen.tag_bind(self.leftButtonArrow, "<Enter>", lambda event: self.enter_option(False))
         self.screen.tag_bind(self.leftButton, "<Leave>", self.leave)
@@ -256,25 +255,29 @@ class user:
 
         self.screen.tag_bind(self.rightButton, "<Button-1>", lambda event: self.choose_option(True))
         self.screen.tag_bind(self.rightButtonArrow, "<Button-1>", lambda event: self.choose_option(True))
-        self.root.bind("<Right>", lambda event: self.click_option(True, arrow = True))
+        self.root.bind("<Right>", lambda event: self.choose_option(True))
         self.screen.tag_bind(self.rightButton, "<Enter>", lambda event: self.enter_option(True))
         self.screen.tag_bind(self.rightButtonArrow, "<Enter>", lambda event: self.enter_option(True))
         self.screen.tag_bind(self.rightButton, "<Leave>", self.leave)
         self.screen.tag_bind(self.rightButtonArrow, "<Leave>", self.leave)
     
-    def choose_option(self, option, arrow = False):
-        self.card1.decided = True
-        self.card1.choice = option
-        self.leave("")
-        self.card1.delete_key()
+    def choose_option(self, option):
+        try:
+            self.card1.decided = True
+            self.card1.choice = option
+            self.leave("")
+            self.card1.delete_key()
+        except ValueError:
+            pass
     
     def enter_option(self, option):
-        cords = self.screen.coords(self.leftButton) if not option else self.screen.coords(self.rightButton)
-        word = self.negative_word if not option else self.positive_word
-        option = 'true' if option else 'false'
-        self.temp_text = self.screen.create_text((cords[0]+cords[2])//2, cords[1]+100, text = word, fill = "white", font = ("Courier", 15))
-        self.indicators(self.card1.situation[option])
-    
+        if not self.card1.decided:
+            cords = self.screen.coords(self.leftButton) if not option else self.screen.coords(self.rightButton)
+            word = self.negative_word if not option else self.positive_word
+            option = 'true' if option else 'false'
+            self.temp_text = self.screen.create_text((cords[0]+cords[2])//2, cords[1]+100, text = word, fill = "white", font = ("Courier", 15))
+            self.indicators(self.card1.situation[option])
+        
     #User takes mouse off a button
     def leave(self, event):
         self.screen.delete(self.temp_text)
@@ -305,6 +308,11 @@ class anarchy(user, menu):
 
     def qPress(self, event):
         self.qPressed = True
+    
+    @staticmethod
+    def reset_colors(*args):
+        for i in args:
+            i.set_color()
 
     def set_up(self):
         self.month = 0 #week counter
@@ -312,7 +320,7 @@ class anarchy(user, menu):
         copyFile('choices.json', 'choices-user.json') #Copy file over
 
         #Instantiate of 4 icons
-        self.gun, self.dollar, self.leaf, self.person = (
+        self.icons = self.gun, self.dollar, self.leaf, self.person = (
             military(self.screen), money(self.screen), nature(self.screen), people(self.screen)
         )
 
@@ -320,16 +328,18 @@ class anarchy(user, menu):
         self.negative = ["No", "No way!", "Not on my watch", "Not happening", "How about no"]
         self.positive = ["Yes", "Of course", "Sure", "Ok", "I'll see to it", "Alright"]
 
-        for _ in range(25):
+        for _ in range(24):
             #Start user at 50% for each icon
-            self.gun.canvas_delete(), self.dollar.canvas_delete(), self.leaf.canvas_delete(), self.person.canvas_delete()
-            self.gun += 2
-            self.dollar += 2
-            self.leaf += 2
-            self.person += 2
+            for i in self.icons:
+                i.delete()
+                i += 2
 
             self.screen.update()
             sleep(0.03)
+
+        self.reset_colors(*self.icons)
+
+        self.screen.update()
 
     #Toggles full screen
     def fullScreenToggle(self, event):
@@ -432,42 +442,60 @@ class anarchy(user, menu):
             change = True
             self.dollar += 1
         
+        
         return change
+
+    #Gives game over message
+    def endgame(self, *args, **kwargs):
+        looseText = self.screen.create_text(*args, **kwargs)
+        self.screen.delete(self.leftButton, self.rightButton, self.leftButtonArrow, self.rightButtonArrow, self.numMonths)
+        self.screen.update()
+
+        sleep(5)
+
+        self.screen.delete(looseText)
+        for i in self.icons:
+            i.delete("all")
+
+        try: del self.card1 #Delete card
+        except AttributeError: pass
+        
+        try: self.leave("")
+        except AttributeError: pass
+
+        self.menuScreen(self.screen)
 
     #Check if values are too low, and if user looses the game
     def check_values(self):
         kwargs = {"anchor": "center", "fill": "white", "font": ("Courier", 44), "width": self.screen.winfo_width()-20}
         args = int(self.screen['width'])//2, int(self.screen['height'])//2
 
-        #Gives game over message
-        def endgame(*args, **kwargs):
-            self.screen.create_text(*args, **kwargs)
-            self.screen.delete(self.leftButton, self.rightButton, self.leftButtonArrow, self.rightButtonArrow)
-            self.screen.update()
-            sleep(5)
-            self.screen.delete("all")
-            self.menuScreen(self.screen)
-
         if self.gun.current == 0:
             kwargs['text'] = "You've been invaded! Your week military didn't last a chance! Your country collapses into anarchy."
-            endgame(args, kwargs)
+            self.endgame(*args, **kwargs)
         elif self.dollar.current == 0:
-            kwargs['text'] = "The country is out of money. You're in crippling debt, bankrupt, and can't pay for anythinga. Your country has collapsed into anarchy."
-            endgame(args, kwargs)
+            kwargs['text'] = "The country is out of money. You're in crippling debt, bankrupt, and can't pay for anything. Your country has collapsed into anarchy."
+            self.endgame(*args, **kwargs)
         elif self.person.current == 0:
             kwargs['text'] = "Displeasure amongst the people has some people very mad. You seem to have been poisoned by a mysterious substance. Soon, you will be dead, and your country collapses into anarchy. "
-            endgame(args, kwargs)
+            self.endgame(*args, **kwargs)
         elif self.leaf.current == 0:
             kwargs['text'] = "When nature falls, everyone goes with it. Food becomes ever more scarce, and your country collapses into anarchy."
-            endgame(args, kwargs)
+            self.endgame(*args, **kwargs)
 
     def get_targets(self):
         #Create a dictionary of desired values
         comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
         if self.difficulty == "h":
-            for i in comparison:
-                if comparison[i] < 0:
-                    comparison[i] -= 3
+            amt = 5
+        elif self.difficulty = "m":
+            amt = 3
+        else:
+            amt = 0
+            
+        for i in comparison:
+            if comparison[i] < 0:
+                comparison[i] -= amt
         targets = {}
         targets["people"] = comparison["people"] + self.person.current
         targets["military"] = comparison["military"] + self.gun.current
@@ -494,7 +522,7 @@ class anarchy(user, menu):
 
             self.bindKeys()
 
-            numMonths = self.screen.create_text( #Display number of weeks
+            self.numMonths = self.screen.create_text( #Display number of weeks
                 1200, 10, anchor = "ne", text = "Month: " + str(self.month), fill = 'white', font=("Courier", 44)
             )
 
@@ -520,24 +548,24 @@ class anarchy(user, menu):
                 self.screen.update()
                 sleep(0.01)
 
+            self.reset_colors(*self.icons)
             self.check_values() #Check for w/l
 
             del self.card1 #Delete card
-            self.screen.delete(self.leftButton, self.rightButton, numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
+            self.screen.delete(self.leftButton, self.rightButton, self.numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
             self.month += 1 #increment month
         
 
         if self.qPressed:
             self.qPressed = False
-            del self.gun
-            del self.leaf
-            del self.person
-            del self.dollar
+
+            for i in self.icons:
+                i.delete("all")
 
             try: del self.card1 #Delete card
             except AttributeError: pass
             
-            self.screen.delete(self.leftButton, self.rightButton, numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
+            self.screen.delete(self.leftButton, self.rightButton, self.numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
 
             try: self.leave("")
             except AttributeError: pass

@@ -68,7 +68,7 @@ class card:
         for element in self.elements: #Move every element with the card
             self.screen.move(element, xSpeed, ySpeed)
         
-        #Return True when the card if off the screen
+        #Return True when the card is off the screen
         if self.screen.coords(self.body)[-2] > self.screen.winfo_width() or self.screen.coords(self.body)[8] < 0: 
             return True
         else:
@@ -127,4 +127,3 @@ class card:
 
     def __del__(self): #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person_title, self.text, self.image_area)
-        del self

@@ -6,9 +6,18 @@ class icon:
     #Adding values to the icons to increase of decrease their fill
     def __add__(self, other):
         #open resized image
-        cropped_image_file = resize_image(
-            Image.open("pictures/icons/" + self.filled_file_name), self.resize[0], self.resize[1]
-        )
+        if other > 0:
+            cropped_image_file = resize_image(
+                Image.open("pictures/icons/" + self.filled_file_name[:-9]+"green.png"), self.resize[0], self.resize[1]
+            )
+        elif other < 0:
+            cropped_image_file = resize_image(
+                Image.open("pictures/icons/" + self.filled_file_name[:-9]+"red.png"), self.resize[0], self.resize[1]
+            )
+        else:
+            cropped_image_file = resize_image(
+                Image.open("pictures/icons/" + self.filled_file_name), self.resize[0], self.resize[1]
+            )
         _, height = cropped_image_file.size #get height of image
 
         increment = height/100 #incement for the height
@@ -28,6 +37,7 @@ class icon:
         self.cropped_image = self.screen.create_image( #create new image
             self.place[0], self.place[1], anchor = 'sw', image = self.cropped_image_file
         )
+        self.screen.tag_raise(self.image)
 
         return self
     
@@ -37,12 +47,17 @@ class icon:
         self += other * -1
         return self
 
-    def canvas_delete(self): #we don't want to use __del__ because we only want to screen.delete()
-        self.screen.delete(self.cropped_image)
-    
-    def __del__(self):
-        self.screen.delete(self.cropped_image, self.image)
-        del self
+    #Changing the colour to white
+    def set_color(self):
+        if self.current > 25:
+            self += 0
+        else:
+            self += 1
+            self -= 1
+
+    def delete(self, *args):
+        if len(args) == 0: self.screen.delete(self.cropped_image)
+        elif args[0] == "all": self.screen.delete(self.cropped_image, self.image)
 
 
 #military meter, 
