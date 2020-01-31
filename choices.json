@@ -21,7 +21,7 @@
                 "false": {"people": -10, "military": 0, "economy": 10, "nature": 0}
             },
             {
-                "description": "We've found a new oil feild. Can we start fracking?",
+                "description": "We've found a new oil field. Can we start fracking?",
                 "true": {"people": 0, "military": 0, "economy": 25, "nature": -25},
                 "false": {"people": 0, "military": 0, "economy": -25, "nature": 25}
             },
@@ -252,7 +252,7 @@
                 "false": {"people": 0, "military": -25, "economy": 35, "nature": 0}
             },
             {
-                "description": "Lets bring our soldiers home. Wat are they doing overseas anyways?",
+                "description": "Lets bring our soldiers home. What are they doing overseas anyways?",
                 "true": {"people": 0, "military": 20, "economy": -15, "nature": 0},
                 "false": {"people": 0, "military": -10, "economy": 10, "nature": 0}
             },

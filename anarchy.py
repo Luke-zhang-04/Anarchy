@@ -123,13 +123,14 @@ class menu:
         self.screen = screen
         
         width, height = screen.winfo_width(), screen.winfo_height()
+        time = 0.1
 
         for i in range(9, 50, 2): #Fade in title
             title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(i), text = "Anarchy")
         
             menuButtons = self.menuButtons = {} #Buttons
             
-            self.buttonNames = ["quit", "help", "load", "easy", "hard"]
+            self.buttonNames = ["quit", "help", "load", "easy", "medium", "hard", "insane"]
 
             for j in range(2):
                 self.menuButtons[self.buttonNames[j] + "Button"] = screen.create_rectangle(
@@ -139,7 +140,7 @@ class menu:
                     150, (2*height-200-2*(j*175))//2, anchor = "center", text = self.buttonNames[j].title(), font = ("Courier", 50), fill = "black"
                 )
             
-            for j in range(3):
+            for j in range(5):
                 self.menuButtons[self.buttonNames[j+2] + "Button"] = screen.create_rectangle(
                     width-275, height-25-(j*175), width-25, height-175-(j*175), fill = "grey" + str(i), outline = "gray" + str(i)
                 ) 
@@ -148,13 +149,14 @@ class menu:
                 )
             
             screen.update()
-            sleep(0.1)
+            sleep(time)
             screen.delete(title)
 
             for i in menuButtons: screen.delete(menuButtons[i])
+            time /= 1.5
 
         self.title = screen.create_text(width//2, 100, anchor = "n", font = ("Courier", 100), fill = "grey" + str(50), text = "Anarchy")
-        self.buttonNames = ["quit", "help", "load", "easy", "hard"]
+        self.buttonNames = ["quit", "help", "load", "easy", "medium", "hard", "insane"]
 
         for i in range(2):
             self.menuButtons[self.buttonNames[i] + "Button"] = screen.create_rectangle(
@@ -164,7 +166,7 @@ class menu:
                 150, (2*height-200-2*(i*175))//2, anchor = "center", text = self.buttonNames[i].title(), font = ("Courier", 50), fill = "black"
             )
         
-        for i in range(3):
+        for i in range(5):
             self.menuButtons[self.buttonNames[i+2] + "Button"] = screen.create_rectangle(
                 width-275, height-25-(i*175), width-25, height-175-(i*175), fill = "grey50", outline = "gray50"
             ) 
@@ -179,8 +181,12 @@ class menu:
         screen.tag_bind(menuButtons["helpText"], "<Button-1>", self.displayHelp)
         screen.tag_bind(menuButtons["loadButton"], "<Button-1>", self.loadData)
         screen.tag_bind(menuButtons["loadText"], "<Button-1>", self.loadData)
+        screen.tag_bind(menuButtons["insaneButton"], "<Button-1>", lambda event: self.runDifficulty("i"))
+        screen.tag_bind(menuButtons["insaneText"], "<Button-1>", lambda event: self.runDifficulty("i"))
         screen.tag_bind(menuButtons["hardButton"], "<Button-1>", lambda event: self.runDifficulty("h"))
         screen.tag_bind(menuButtons["hardText"], "<Button-1>", lambda event: self.runDifficulty("h"))
+        screen.tag_bind(menuButtons["mediumButton"], "<Button-1>", lambda event: self.runDifficulty("m"))
+        screen.tag_bind(menuButtons["mediumText"], "<Button-1>", lambda event: self.runDifficulty("m"))
         screen.tag_bind(menuButtons["easyButton"], "<Button-1>", lambda event: self.runDifficulty("e"))
         screen.tag_bind(menuButtons["easyText"], "<Button-1>", lambda event: self.runDifficulty("e"))
 
@@ -224,7 +230,7 @@ class menu:
             self.screen.winfo_width()//2, self.screen.winfo_height()//2, anchor = "center", image = self.background
         )
         '''
-        self.runGame("difficulty")
+        self.runGame(difficulty)
 
     def startMusic(self): #Stat music
         if sound_engine == "pygame": #If using pygame
@@ -408,8 +414,6 @@ class anarchy(user, menu):
         '''
         
         self.screen.update()
-        
-        
     
     #Animate icons, takes in dict of values
     def animate_icons(self, comparison):
@@ -486,7 +490,9 @@ class anarchy(user, menu):
     def get_targets(self):
         #Create a dictionary of desired values
         comparison = self.card1.situation['true'] if self.card1.choice else self.card1.situation['false']
-        if self.difficulty == "h":
+        if self.difficulty == "i":
+            amt = 7
+        elif self.difficulty == "h":
             amt = 5
         elif self.difficulty == "m":
             amt = 3
@@ -512,49 +518,54 @@ class anarchy(user, menu):
     def runGame(self, difficulty):
         self.set_up()
         self.difficulty = difficulty
-        while self.month <= 52 and not self.qPressed: #52 weeks in a year
-            self.card1 = card(self.screen) #Instantiate new card
-            self.card1.draw() #Draw the card
-            self.draw_arrows() #Draw yes or no arrows
+        self.card1 = card(self.screen) #Instantiate new card
+        self.card1.draw() #Draw the card
+        while self.month <= 104 and not self.qPressed and not self.escPressed: #Presidents can only serve two terms
+            while self.month <= 52 and not self.qPressed and not self.escPressed: #52 weeks in a year
+                card2 = card(self.screen)
+                card2.draw()
+                self.card1.tag_raise()
+                self.draw_arrows() #Draw yes or no arrows
 
-            self.positive_word = choice(self.positive) #Choose a yes word
-            self.negative_word = choice(self.negative) #Choose a no word
+                self.positive_word = choice(self.positive) #Choose a yes word
+                self.negative_word = choice(self.negative) #Choose a no word
 
-            self.bindKeys()
+                self.bindKeys()
 
-            self.numMonths = self.screen.create_text( #Display number of weeks
-                1200, 10, anchor = "ne", text = "Month: " + str(self.month), fill = 'white', font=("Courier", 44)
-            )
+                self.numMonths = self.screen.create_text( #Display number of weeks
+                    1200, 10, anchor = "ne", text = "Month: " + str(self.month), fill = 'white', font=("Courier", 44)
+                )
 
-            self.screen.update()
-            while not self.card1.decided: #Wait for user to decide
+                self.screen.update()
+                while not self.card1.decided: #Wait for user to decide
+                    if self.qPressed or self.escPressed: break
+                    self.screen.update()
+                    sleep(0.01)
                 if self.qPressed or self.escPressed: break
-                self.screen.update()
-                sleep(0.01)
-            if self.qPressed or self.escPressed: break
-        
-            self.targets, direction = self.get_targets()
-            move_finished = icons_finished = False
-            
-            #Animate the icons filling up and card sliding over
-            while True:
-                if self.card1.move(direction): #Move the card
-                    move_finished = True
-                if not self.animate_icons(self.targets): #Increment the icons
-                    icons_finished = True
                 
-                if move_finished and icons_finished: break #Break when both are finished
+            
+                self.targets, direction = self.get_targets()
+                move_finished = icons_finished = False
 
-                self.screen.update()
-                sleep(0.01)
+                #Animate the icons filling up and card sliding over
+                while True:
+                    if self.card1.move(direction): #Move the card
+                        move_finished = True
+                    if not self.animate_icons(self.targets): #Increment the icons
+                        icons_finished = True
+                    
+                    if move_finished and icons_finished: break #Break when both are finished
 
-            self.reset_colors(*self.icons)
-            self.check_values() #Check for w/l
+                    self.screen.update()
+                    sleep(0.01)
 
-            del self.card1 #Delete card
-            self.screen.delete(self.leftButton, self.rightButton, self.numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
-            self.month += 1 #increment month
-        
+                self.reset_colors(*self.icons)
+                self.check_values() #Check for w/l
+
+                del self.card1 #Delete card
+                self.card1 = card2
+                self.screen.delete(self.leftButton, self.rightButton, self.numMonths, self.leftButtonArrow, self.rightButtonArrow) #Delete other things
+                self.month += 1 #increment month
 
         if self.qPressed:
             self.qPressed = False

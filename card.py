@@ -56,6 +56,10 @@ class card:
 
         return screen.create_polygon(points, smooth=True, **kwargs)
 
+    def tag_raise(self):
+        for i in self.elements:
+            self.screen.tag_raise(i)
+
     #Move the card
     def move(self, direction):
         if direction.lower() in ["r", "right", "e", "east"]: #Move the card
@@ -66,6 +70,7 @@ class card:
             ySpeed = 0
         
         for element in self.elements: #Move every element with the card
+            self.tag_raise()
             self.screen.move(element, xSpeed, ySpeed)
         
         #Return True when the card is off the screen
@@ -123,7 +128,7 @@ class card:
             text = self.situation['description'], font=("Courier")
         )
 
-        self.elements = [self.body, self.top_area, self.image_file, self.image, self.person_title, self.text, self.image_area]
+        self.elements = [self.body, self.top_area, self.image_file, self.person_title, self.text, self.image_area, self.image]
 
     def __del__(self): #delete card
         self.screen.delete(self.body, self.top_area, self.image_file, self.image, self.person_title, self.text, self.image_area)
