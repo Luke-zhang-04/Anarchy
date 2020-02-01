@@ -16,6 +16,10 @@ from time import sleep
 from random import choice
 import json
 
+import os, sys
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
 
 def soundInstall():
     #try to import pygame, resort to winsound, if needed, otherwise no engine
@@ -96,7 +100,6 @@ class menu:
         text = screen.create_text(width//2, height//2, text = "Loading . . .", **textKwargs)
         percentage = screen.create_text(width//2, (height//2)+100, text = "0%", **textKwargs)
         screen.update()
-
         self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
         percentage = percentage_display(screen, range(76), old = percentage)
@@ -341,7 +344,10 @@ class anarchy(user, menu):
                 i += 2
 
             self.screen.update()
-            sleep(0.03)
+            sleep(0.01)
+        
+        self.card1 = card(self.screen) #Instantiate new card
+        self.card1.draw() #Draw the card
 
         self.reset_colors(*self.icons)
 
@@ -518,8 +524,6 @@ class anarchy(user, menu):
     def runGame(self, difficulty):
         self.set_up()
         self.difficulty = difficulty
-        self.card1 = card(self.screen) #Instantiate new card
-        self.card1.draw() #Draw the card
         while self.month <= 104 and not self.qPressed and not self.escPressed: #Presidents can only serve two terms
             while self.month <= 52 and not self.qPressed and not self.escPressed: #52 weeks in a year
                 card2 = card(self.screen)

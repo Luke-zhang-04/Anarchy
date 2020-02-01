@@ -10,10 +10,15 @@ def install():
     global targetPackages
     pipInstalled = checkPip()
     if len(targetPackages) == 0:
-        with open("resources/targetPackages.txt") as fin:
-            targetPackages = fin.read().splitlines()
+        try:
+            with open("resources/targetPackages.txt") as fin:
+                targetPackages = fin.read().splitlines()
+        except FileNotFoundError:
+            targetPackages = ['PIL, Pillow', 'pygame, pygame']
+        finally:
             for i in range(len(targetPackages)):
                 targetPackages[i] = targetPackages[i].split(',')
+                
     for pkg in targetPackages:
         checkPackage(pkg)
     if len(packagesMissing) == 0:
