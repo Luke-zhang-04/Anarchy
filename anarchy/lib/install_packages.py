@@ -1,4 +1,4 @@
-from lib.install_Functions import checkPip, installPip, checkPackage, installPackage, packagesMissing
+from anarchy.lib.install_Functions import checkPip, installPip, checkPackage, installPackage, packagesMissing
 import sys
 
 targetPackages = [

@@ -1,0 +1,1 @@
+from anarchy.anarchy import anarchy

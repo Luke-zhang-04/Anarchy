@@ -1,4 +1,4 @@
-from imageFunctions import pack, resize_image, crop_image
+from anarchy.imageFunctions import pack, resize_image, crop_image
 
 from PIL import Image
 
@@ -15,7 +15,7 @@ class card:
         
         if not finished:
             #Gets random situation
-            with open('choices-user.json') as fin:
+            with open('anarchy/choices-user.json') as fin:
                 data = json.load(fin) #Load data
                 #Get random person to speak to
                 situation = choice(list(data['choices']))
@@ -34,14 +34,14 @@ class card:
 
     #Once a situation has been used, it needs to be deleted
     def delete_key(self):
-        with open('choices-user.json', 'r') as data_file:
+        with open('anarchy/choices-user.json', 'r') as data_file:
             data = json.load(data_file)
 
         data["choices"][self.person_key].remove(self.situation) #Remove the situation
         if len(data["choices"][self.person_key]) == 1: #Remove the perosn entirely if they have no more situations left
             del data["choices"][self.person_key]
 
-        with open('choices-user.json', 'w') as data_file: #Dump modified data
+        with open('anarchy/choices-user.json', 'w') as data_file: #Dump modified data
             json.dump(data, data_file)
 
     #Created rectangle w/ rounded corners

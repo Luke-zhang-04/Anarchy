@@ -1,14 +1,14 @@
 #installing packages from pip
-from lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
+from anarchy.lib.install_packages import install #from https://github.com/kertox662/PythonPackageInstaller
 install()
 
 #third party packages
 from PIL import Image
 
 #cutsom packages
-from imageFunctions import pack, resize_image, crop_image
-from icons import military, money, nature, people
-from card import card
+from anarchy.imageFunctions import pack, resize_image, crop_image
+from anarchy.icons import military, money, nature, people
+from anarchy.card import card
 
 #Built in packages
 from tkinter import Tk, Canvas
@@ -100,12 +100,12 @@ class menu:
         text = screen.create_text(width//2, height//2, text = "Loading . . .", **textKwargs)
         percentage = screen.create_text(width//2, (height//2)+100, text = "0%", **textKwargs)
         screen.update()
-        self.background = resize_image(Image.open("pictures/background.png"), width, width) #Background image
+        self.background = resize_image(Image.open("anarchy/pictures/background.png"), width, width) #Background image
         self.background = pack(self.background)
         percentage = percentage_display(screen, range(76), old = percentage)
 
 
-        self.background2 = resize_image(Image.open("pictures/skyline.png"), width, height//2)
+        self.background2 = resize_image(Image.open("anarchy/pictures/skyline.png"), width, height//2)
         self.background2 = pack(self.background2)
         percentage = percentage_display(screen, range(76, 101), old = percentage)
 
@@ -238,12 +238,12 @@ class menu:
     def startMusic(self): #Stat music
         if sound_engine == "pygame": #If using pygame
             pygame.mixer.init()
-            pygame.mixer.music.load("other/adrenaline.wav")
+            pygame.mixer.music.load("anarchy/other/adrenaline.wav")
             pygame.mixer.music.set_volume(0.25)
             pygame.mixer.music.play(-1)
 
         elif sound_engine == "winsound": #If using winsound
-            PlaySound('other/adrenaline.wav', SND_LOOP + SND_ASYNC)
+            PlaySound('anarchy/other/adrenaline.wav', SND_LOOP + SND_ASYNC)
         
         else: #Tell user no music is being played
             self.screen.create_text(
@@ -326,7 +326,7 @@ class anarchy(user, menu):
     def set_up(self):
         self.month = 0 #week counter
 
-        copyFile('choices.json', 'choices-user.json') #Copy file over
+        copyFile('anarchy/choices.json', 'anarchy/choices-user.json') #Copy file over
 
         #Instantiate of 4 icons
         self.icons = self.gun, self.dollar, self.leaf, self.person = (
@@ -410,8 +410,8 @@ class anarchy(user, menu):
         ]
         self.rightButtonArrow = self.screen.create_polygon(*arrowPoints, fill = "white", outline = "white")
         '''
-        self.left = resize_image(Image.open("pictures/button-left.png"), 50, 50)
-        self.right = resize_image(Image.open("pictures/button-right.png"), 50, 50)
+        self.left = resize_image(Image.open("anarchy/pictures/button-left.png"), 50, 50)
+        self.right = resize_image(Image.open("anarchy/pictures/button-right.png"), 50, 50)
         self.leftPhotoImg = pack(self.left)
         self.rightPhotoImg = pack(self.right)
         card = self.screen.coords(self.card1.body)[-2], self.screen.coords(self.card1.body)[8]
@@ -587,7 +587,7 @@ class anarchy(user, menu):
 
             self.menuScreen(self.screen)
         else:
-            vp = {"title": "Vice President Russel", "image": ["pictures/vp.png", 200, 150]}
+            vp = {"title": "Vice President Russel", "image": ["anarchy/pictures/vp.png", 200, 150]}
             sit = "Congratulations on a successful term, president. You'll be glad to hear that the country is in good shape, and everything is still intact."
             self.card1 = card(self.screen, finished = True, person = vp, situation = sit) #Instantiate new card
             self.card1.draw() #Draw the card

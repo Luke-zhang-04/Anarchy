@@ -3,7 +3,7 @@
         "vp": [
             {
                 "title": "Vice President Russel",
-                "image": ["pictures/vp.png", 200, 150]
+                "image": ["anarchy/pictures/vp.png", 200, 150]
             },
             {
                 "description": "Pharmaceutical want to use animal testing for their new drugs, and want government approval.",
@@ -44,7 +44,7 @@
         "doctor": [
             {
                 "title": "Hospital Administrator Jones",
-                "image": ["pictures/doctor.png", 100, 125]
+                "image": ["anarchy/pictures/doctor.png", 100, 125]
             },
             {
                 "description": "Our hospitals are underfunded. Our equipment is outdated and we are constantly short on staff. We want the government to invest more money into better healthcare.",
@@ -80,7 +80,7 @@
         "scientist": [
             {
                 "title": "Research Officer Rodriguez",
-                "image": ["pictures/scientist.png", 175, 150]
+                "image": ["anarchy/pictures/scientist.png", 175, 150]
             },
             {
                 "description": "We want permission to use nuclear power for our projects, but the head scientist won't let us.",
@@ -121,7 +121,7 @@
         "citizen": [
             {
                 "title": "Concerned Citizen",
-                "image": [["pictures/person1.png", 125, 175], ["pictures/person2.png", 150, 150]]
+                "image": [["anarchy/pictures/person1.png", 125, 175], ["anarchy/pictures/person2.png", 150, 150]]
             },
             {
                 "description": "Can we get rid of the homeless people? All they do is take up space, litter, and defacate on the streets!",
@@ -157,7 +157,7 @@
         "CIA": [
             {
                 "title": "Director of National \nIntellegence Smith",
-                "image": ["pictures/spy.png", 125, 125]
+                "image": ["anarchy/pictures/spy.png", 125, 125]
             },
             {
                 "description": "\nWe are concerned about certain extremist groups within the country. To maintain safety of the nation, we need to comprimise certain civil libreties of the citizens.",
@@ -198,7 +198,7 @@
         "foreign": [
             {
                 "title": "Secretary of State Moore",
-                "image": ["pictures/secOfState.png", 150, 125]
+                "image": ["anarchy/pictures/secOfState.png", 150, 125]
             },
             {
                 "description": "We need to sanction Russia before they get out of hand",
@@ -234,7 +234,7 @@
         "military": [
             {
                 "title": "General Torres",
-                "image": ["pictures/general.png", 225, 190]
+                "image": ["anarchy/pictures/general.png", 225, 190]
             },
             {
                 "description": "We need to increase our defense budget and spend more on the military. Foreign powers are becoming stronger and will soon be a real threat towards us. We need to be able to defend outselves.",
@@ -275,7 +275,7 @@
         "economy": [
             {
                 "title": "Secretary of the Treasury \nOwens",
-                "image": ["pictures/economic.png", 125, 125]
+                "image": ["anarchy/pictures/economic.png", 125, 125]
             },
             {
                 "description": "\nWe need to raise taxes to fund the government or we're going to run into a lot of debt",

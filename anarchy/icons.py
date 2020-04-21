@@ -1,4 +1,4 @@
-from imageFunctions import pack, resize_image, crop_image
+from anarchy.imageFunctions import pack, resize_image, crop_image
 from PIL import Image
 
 #Icon class for adding and subtracting values
@@ -8,15 +8,15 @@ class icon:
         #open resized image
         if other > 0:
             cropped_image_file = resize_image(
-                Image.open("pictures/icons/" + self.filled_file_name[:-9]+"green.png"), self.resize[0], self.resize[1]
+                Image.open("anarchy/pictures/icons/" + self.filled_file_name[:-9]+"green.png"), self.resize[0], self.resize[1]
             )
         elif other < 0:
             cropped_image_file = resize_image(
-                Image.open("pictures/icons/" + self.filled_file_name[:-9]+"red.png"), self.resize[0], self.resize[1]
+                Image.open("anarchy/pictures/icons/" + self.filled_file_name[:-9]+"red.png"), self.resize[0], self.resize[1]
             )
         else:
             cropped_image_file = resize_image(
-                Image.open("pictures/icons/" + self.filled_file_name), self.resize[0], self.resize[1]
+                Image.open("anarchy/pictures/icons/" + self.filled_file_name), self.resize[0], self.resize[1]
             )
         _, height = cropped_image_file.size #get height of image
 
@@ -65,7 +65,7 @@ class military(icon):
     def __init__(self, screen):
         self.screen = screen #Canvas
         self.filled_file_name = "gun-white.png" #Name of filled image file
-        image_file = resize_image(Image.open("pictures/icons/gun-trans.png"), 40, 50) #resize image
+        image_file = resize_image(Image.open("anarchy/pictures/icons/gun-trans.png"), 40, 50) #resize image
         self.image_file = pack(image_file) #Pack into photoimage
         self.image = screen.create_image(10, 60, anchor = 'sw', image = self.image_file) #Create image
 
@@ -80,7 +80,7 @@ class money(icon):
     def __init__(self, screen):
         self.screen = screen #Canvas
         self.filled_file_name = "money-white.png" #Name of filled image file
-        image_file = resize_image(Image.open("pictures/icons/money-trans.png"), 40, 50) #resize image
+        image_file = resize_image(Image.open("anarchy/pictures/icons/money-trans.png"), 40, 50) #resize image
         self.image_file = pack(image_file) #Pack into photoimage
         self.image = screen.create_image(50, 60, anchor = 'sw', image = self.image_file) #Create image
 
@@ -95,7 +95,7 @@ class nature(icon):
     def __init__(self, screen):
         self.screen = screen
         self.filled_file_name = "plant-white.png" #Name of filled image file
-        self.image_file = resize_image(Image.open("pictures/icons/plant-trans.png"), 40 , 50) #resize image
+        self.image_file = resize_image(Image.open("anarchy/pictures/icons/plant-trans.png"), 40 , 50) #resize image
         self.image_file = pack(self.image_file) #Pack into photoimage
         self.image = screen.create_image(90, 60, anchor = 'sw', image = self.image_file) #Create image
 
@@ -110,7 +110,7 @@ class people(icon):
     def __init__(self, screen):
         self.screen = screen
         self.filled_file_name = "people-white.png" #Name of filled image file
-        self.image_file = resize_image(Image.open("pictures/icons/people-trans.png"), 70 , 50) #resize image
+        self.image_file = resize_image(Image.open("anarchy/pictures/icons/people-trans.png"), 70 , 50) #resize image
         self.image_file = pack(self.image_file) #Pack into photoimage
         self.image = screen.create_image(120, 60, anchor = 'sw', image = self.image_file) #Create image
         
